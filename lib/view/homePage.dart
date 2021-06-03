@@ -344,7 +344,7 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                             child: GradientText(
-                              "Tulis Jurnal",
+                              "Tulis Jurnalmu",
                               gradient: Style().gradasi,
                               style: TextStyle(
                                   fontSize: 14,
