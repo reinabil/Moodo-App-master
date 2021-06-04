@@ -6,7 +6,7 @@ import 'package:gradient_text/gradient_text.dart';
 import 'package:format_indonesia/format_indonesia.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moodo/model/doa.dart';
-import 'package:moodo/view/webView.dart';
+import 'package:moodo/view/moodoWeb.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:sized_context/sized_context.dart';
 import 'package:moodo/model/style.dart';
@@ -334,25 +334,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
-                        transform: Matrix4.translationValues(0.0, -20.0, 0.0),
-                        child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        WebView()),
-                              );
-                            },
-                            child: GradientText(
-                              "Tulis Jurnalmu",
-                              gradient: Style().gradasi,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: "Poppins",
-                                  decoration: TextDecoration.underline),
-                            )),
-                      ),
-                      Container(
                         height: 100,
                       ),
                     ],
@@ -435,6 +416,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
 
 // Align(
 //   alignment: Alignment.topLeft,

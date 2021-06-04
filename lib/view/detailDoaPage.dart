@@ -172,7 +172,7 @@ class DetailDoa extends ConsumerWidget {
                       margin: EdgeInsets.only(right: 24),
                       child: IconButton(
                           icon: Icon(
-                            Icons.file_copy,
+                            Icons.share,
                             color: Colors.white,
                           ),
                           onPressed: () {
@@ -242,7 +242,7 @@ class DetailDoa extends ConsumerWidget {
                           margin: EdgeInsets.only(right: 24),
                           child: IconButton(
                               icon: Icon(
-                                Icons.file_copy,
+                                Icons.share,
                                 color: Colors.white,
                               ),
                               onPressed: () {
@@ -292,7 +292,7 @@ class DetailDoa extends ConsumerWidget {
                           margin: EdgeInsets.only(right: 24),
                           child: IconButton(
                               icon: Icon(
-                                Icons.file_copy,
+                                Icons.share,
                                 color: Colors.white,
                               ),
                               onPressed: () {

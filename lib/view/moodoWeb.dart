@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:moodo/model/style.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class WebView extends StatefulWidget {
-  const WebView({Key? key}) : super(key: key);
+class MoodoWeb extends StatefulWidget {
+  const MoodoWeb({Key? key}) : super(key: key);
 
   @override
-  _WebViewState createState() => _WebViewState();
+  _MoodoWebState createState() => _MoodoWebState();
 }
 
-class _WebViewState extends State<WebView> {
+class _MoodoWebState extends State<MoodoWeb> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +46,10 @@ class _WebViewState extends State<WebView> {
           ),
         ),
       ),
+      body: Container(
+          child: WebView(
+        initialUrl: 'https://ipb.ac.id',
+      )),
     );
   }
 }
