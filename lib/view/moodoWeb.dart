@@ -39,7 +39,7 @@ class _MoodoWebState extends State<MoodoWeb> {
         centerTitle: true,
         backgroundColor: Colors.white,
         title: Text(
-          "Jurnal Moodo",
+          "Jurnal Harian",
           style: TextStyle(
             fontFamily: "Poppins",
             color: Colors.black,
@@ -48,7 +48,7 @@ class _MoodoWebState extends State<MoodoWeb> {
       ),
       body: Container(
           child: WebView(
-        initialUrl: 'https://ipb.ac.id',
+        initialUrl: 'https://moodo.my.id/',
       )),
     );
   }

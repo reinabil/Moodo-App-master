@@ -1,17 +1,58 @@
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:format_indonesia/format_indonesia.dart';
 import 'package:lottie/lottie.dart';
+import 'package:moodo/bloc/colorBloc.dart';
+import 'package:moodo/bloc/themeBloc.dart';
 import 'package:moodo/model/doa.dart';
 import 'package:moodo/view/moodoWeb.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sized_context/sized_context.dart';
 import 'package:moodo/model/style.dart';
 import 'moodPage.dart';
 import 'package:gradient_text/gradient_text.dart';
+import 'package:moodo/model/BilButton.dart';
+
+Color colorSolid(LinearGradient theme) =>
+    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
+        ? Colors.red
+        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
+            ? Colors.blue
+            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
+                ? Colors.purple
+                : (theme == Style().gradasiOrange ||
+                        theme == Style().gradasiOrange2)
+                    ? Colors.yellow
+                    : Colors.teal;
+
+Color colorAccent(LinearGradient theme) =>
+    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
+        ? Colors.redAccent
+        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
+            ? Colors.blueAccent
+            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
+                ? Colors.purpleAccent
+                : (theme == Style().gradasiOrange ||
+                        theme == Style().gradasiOrange2)
+                    ? Colors.orangeAccent
+                    : Colors.tealAccent;
+
+Color colorActive(LinearGradient theme) =>
+    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
+        ? Colors.redAccent
+        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
+            ? Colors.blueAccent
+            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
+                ? Colors.purple
+                : (theme == Style().gradasiOrange ||
+                        theme == Style().gradasiOrange2)
+                    ? Colors.orange.shade900
+                    : Colors.teal;
 
 class HomePage extends StatefulWidget {
   @override
@@ -34,389 +75,509 @@ class _HomePageState extends State<HomePage> {
     _isInit = false;
   }
 
+  void saveData(String theme) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('theme', theme);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
+    ThemeBloc bloc = BlocProvider.of<ThemeBloc>(context);
+
+    return BlocBuilder<ThemeBloc, LinearGradient>(
+        // ! theme == tema aplikasi
+        builder: (context, theme) {
+      return MaterialApp(
+        theme: ThemeData(
           // Define the default brightness and colors.
-          primaryColor: Colors.teal,
-          accentColor: Colors.tealAccent),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(children: <Widget>[
-          Container(
+          primaryColor: colorSolid(theme),
+          accentColor: colorAccent(theme),
+        ),
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Stack(children: <Widget>[
+            AnimatedContainer(
               constraints: BoxConstraints.expand(),
               decoration: BoxDecoration(
-                gradient: Style().gradasi,
-              )),
-          ListView(
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(40, 40, 40, 40),
-                child: Column(
-                  children: [
-                    Text(
-                      "Assalamualaikum",
-                      style: Style(styleColor: Colors.white).header,
-                    ),
-                    Text(
-                      Waktu(now).format('EEEE, d MMMM y'),
-                      style: Style(styleColor: Colors.white).body,
-                    ),
-                    Text(
-                      hijri.toFormat("dd MMMM yyyy"),
-                      style: Style(styleColor: Colors.white).caption,
-                    ),
+                  // gradient: green,
+                  gradient: theme),
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease,
+            ),
+            ListView(
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(40, 40, 40, 40),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Assalamualaikum",
+                        style: Style(styleColor: Colors.white).header,
+                      ),
+                      Text(
+                        Waktu(now).format('EEEE, d MMMM y'),
+                        style: Style(styleColor: Colors.white).body,
+                      ),
+                      Text(
+                        hijri.toFormat("dd MMMM yyyy"),
+                        style: Style(styleColor: Colors.white).caption,
+                      ),
 
-                    // Container(
-                    //   height: context.heightPct(.2),
-                    // ),
-                    FutureBuilder(
-                        future: _isInit ? fetchDoa(context) : null,
-                        builder: (context, _) {
-                          if (doaList != null) {
-                            Doa doa = doaList![
-                                int.parse(Waktu(now).format('d')) + 51];
-                            return Card(
-                              semanticContainer: true,
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 0, vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                              elevation: 4,
-                              shadowColor: Color.fromARGB(255, 63, 164, 165),
-                              child: Container(
-                                padding: EdgeInsets.all(24),
-                                child: Column(
-                                  children: [
-                                    GradientText(
-                                      "Doa of The Day",
-                                      style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 24),
-                                      gradient: Style().gradasi,
-                                    ),
-                                    Text("${doa.judul}",
+                      // Container(
+                      //   height: context.heightPct(.2),
+                      // ),
+                      FutureBuilder(
+                          future: _isInit ? fetchDoa(context) : null,
+                          builder: (context, _) {
+                            if (doaList != null) {
+                              Doa doa = doaList![
+                                  int.parse(Waktu(now).format('d')) + 51];
+                              return Card(
+                                semanticContainer: true,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                elevation: 4,
+                                shadowColor: colorActive(theme).withAlpha(100),
+                                child: Container(
+                                  padding: EdgeInsets.all(24),
+                                  child: Column(
+                                    children: [
+                                      GradientText(
+                                        "Doa of The Day",
+                                        style: TextStyle(
+                                            fontFamily: "Poppins",
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 24),
+                                        gradient: theme,
+                                      ),
+                                      Text("${doa.judul}",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontFamily: "Poppins",
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic)),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "${doa.lafaz}",
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontFamily: "Poppins"),
                                         textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        "${doa.latin}",
                                         style: TextStyle(
                                             fontFamily: "Poppins",
                                             fontSize: 12,
-                                            fontStyle: FontStyle.italic)),
-                                    SizedBox(
-                                      height: 10,
+                                            fontStyle: FontStyle.italic,
+                                            color: colorActive(theme)),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("${doa.arti}",
+                                          style: TextStyle(
+                                            fontFamily: "Poppins",
+                                            fontSize: 14,
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 32.0),
+                                child: LinearProgressIndicator(
+                                  backgroundColor: Colors.teal,
+                                  valueColor:
+                                      AlwaysStoppedAnimation(Colors.white),
+                                ),
+                              );
+                          })
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: context.heightPct(.3),
+                )
+              ],
+            ),
+            DraggableScrollableSheet(
+                initialChildSize: 0.25,
+                maxChildSize: 0.67,
+                minChildSize: 0.25,
+                builder: (BuildContext c, s) {
+                  return BlocBuilder<ThemeBloc, LinearGradient>(
+                    builder: (context, theme) {
+                      return Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorActive(theme).withAlpha(100),
+                                blurRadius: 6.0,
+                                offset: Offset(0, -7),
+                              )
+                            ]),
+                        child: ListView(
+                          controller: s,
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                transform:
+                                    Matrix4.translationValues(0.0, -10.0, 0.0),
+                                width: context.widthPct(.15),
+                                height: context.heightPct(.007),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[500],
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8, top: 0),
+                              child: GradientText(
+                                "Hai, gimana kabarmu?",
+                                textAlign: TextAlign.center,
+                                style: Style(styleColor: Colors.black).title2,
+                                gradient: theme,
+                              ),
+                            ),
+                            Card(
+                              semanticContainer: true,
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                              elevation: 4,
+                              shadowColor: colorActive(theme).withAlpha(100),
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      "اَلَا بِذِکۡرِ اللّٰہِ تَطۡمَئِنُّ الۡقُلُوۡبُ",
+                                      style: TextStyle(fontSize: 24),
                                     ),
                                     Text(
-                                      "${doa.lafaz}",
-                                      style: TextStyle(
-                                          fontSize: 24, fontFamily: "Poppins"),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      "${doa.latin}",
+                                      "Alaa bidzikrillahi tathma-innul quluub(u);",
                                       style: TextStyle(
                                           fontFamily: "Poppins",
                                           fontSize: 12,
                                           fontStyle: FontStyle.italic,
-                                          color: Colors.teal),
+                                          color: colorActive(theme)),
+                                      textAlign: TextAlign.left,
                                     ),
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    Text("${doa.arti}",
-                                        style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontSize: 14,
-                                        ))
+                                    Text(
+                                      "Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.(QS. Ar Ra’d: 28)",
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontSize: 14,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
-                            );
-                          } else
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 32.0),
-                              child: LinearProgressIndicator(
-                                backgroundColor: Colors.teal,
-                                valueColor:
-                                    AlwaysStoppedAnimation(Colors.white),
-                              ),
-                            );
-                        })
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: context.heightPct(.3),
-              )
-            ],
-          ),
-          DraggableScrollableSheet(
-              initialChildSize: 0.25,
-              maxChildSize: 0.67,
-              minChildSize: 0.25,
-              builder: (BuildContext c, s) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(200, 66, 167, 166),
-                          blurRadius: 6.0,
-                          offset: Offset(0, -7),
-                        )
-                      ]),
-                  child: ListView(
-                    controller: s,
-                    children: <Widget>[
-                      Center(
-                        child: Container(
-                          transform: Matrix4.translationValues(0.0, -10.0, 0.0),
-                          width: context.widthPct(.15),
-                          height: context.heightPct(.007),
-                          decoration: BoxDecoration(
-                              color: Colors.grey[500],
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8, top: 0),
-                        child: GradientText(
-                          "Gimana mood-mu?",
-                          textAlign: TextAlign.center,
-                          style: Style(styleColor: Colors.black).title2,
-                          gradient: Style().gradasi,
-                        ),
-                      ),
-                      Card(
-                        semanticContainer: true,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        elevation: 4,
-                        shadowColor: Color.fromARGB(255, 63, 164, 165),
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                "اَلَا بِذِکۡرِ اللّٰہِ تَطۡمَئِنُّ الۡقُلُوۡبُ",
-                                style: TextStyle(fontSize: 24),
-                              ),
-                              Text(
-                                "Alaa bidzikrillahi tathma-innul quluub(u);",
-                                style: TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.teal),
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.(QS. Ar Ra’d: 28)",
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontSize: 14,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        transform: Matrix4.translationValues(0.0, -20.0, 0.0),
-                        child: Wrap(
-                          spacing: 24,
-                          alignment: WrapAlignment.center,
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          MoodPage(
-                                            moodo: "Sedih",
-                                          )),
-                                );
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      width: context.widthPct(.25),
-                                      height: context.heightPct(.25),
-                                      child: Lottie.asset(
-                                          "assets/animation/sad.json")),
-                                  Container(
-                                    transform: Matrix4.translationValues(
-                                        0.0, -30.0, 0.0),
-                                    child: Text("Sedih",
-                                        style: Style(
-                                                styleColor:
-                                                    Colors.grey.shade600)
-                                            .body),
+                            ),
+                            Container(
+                              transform:
+                                  Matrix4.translationValues(0.0, -20.0, 0.0),
+                              child: Wrap(
+                                spacing: 24,
+                                alignment: WrapAlignment.center,
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                MoodPage(
+                                                  moodo: "Sedih",
+                                                )),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            width: context.widthPct(.25),
+                                            height: context.heightPct(.25),
+                                            child: Lottie.asset(
+                                                "assets/animation/sad.json")),
+                                        Container(
+                                          transform: Matrix4.translationValues(
+                                              0.0, -30.0, 0.0),
+                                          child: Text("Sedih",
+                                              style: Style(
+                                                      styleColor:
+                                                          Colors.grey.shade600)
+                                                  .body),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                MoodPage(
+                                                  moodo: "Biasa aja",
+                                                )),
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                            width: context.widthPct(.25),
+                                            height: context.heightPct(.25),
+                                            child: Lottie.asset(
+                                                "assets/animation/netral.json")),
+                                        Container(
+                                          transform: Matrix4.translationValues(
+                                              0.0, -30.0, 0.0),
+                                          child: Text("Biasa aja",
+                                              style: Style(
+                                                      styleColor:
+                                                          Colors.grey.shade600)
+                                                  .body),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                MoodPage(
+                                                  moodo: "Senang",
+                                                )),
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                            width: context.widthPct(.25),
+                                            height: context.heightPct(.25),
+                                            child: Lottie.asset(
+                                                "assets/animation/happy.json")),
+                                        Container(
+                                          transform: Matrix4.translationValues(
+                                              0.0, -30.0, 0.0),
+                                          child: Text("Senang",
+                                              style: Style(
+                                                      styleColor:
+                                                          Colors.grey.shade600)
+                                                  .body),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          MoodPage(
-                                            moodo: "Biasa aja",
-                                          )),
-                                );
-                              },
-                              child: Column(
-                                children: [
-                                  Container(
-                                      width: context.widthPct(.25),
-                                      height: context.heightPct(.25),
-                                      child: Lottie.asset(
-                                          "assets/animation/netral.json")),
-                                  Container(
-                                    transform: Matrix4.translationValues(
-                                        0.0, -30.0, 0.0),
-                                    child: Text("Biasa aja",
-                                        style: Style(
-                                                styleColor:
-                                                    Colors.grey.shade600)
-                                            .body),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          MoodPage(
-                                            moodo: "Senang",
-                                          )),
-                                );
-                              },
-                              child: Column(
-                                children: [
-                                  Container(
-                                      width: context.widthPct(.25),
-                                      height: context.heightPct(.25),
-                                      child: Lottie.asset(
-                                          "assets/animation/happy.json")),
-                                  Container(
-                                    transform: Matrix4.translationValues(
-                                        0.0, -30.0, 0.0),
-                                    child: Text("Senang",
-                                        style: Style(
-                                                styleColor:
-                                                    Colors.grey.shade600)
-                                            .body),
-                                  ),
-                                ],
-                              ),
+                            Container(
+                              height: 100,
                             ),
                           ],
                         ),
-                      ),
-                      Container(
-                        height: 100,
-                      ),
-                    ],
-                  ),
-                );
-              }),
-          // ANCHOR Tentang aplikasi
-          SafeArea(
-              child: IconButton(
-                  icon: Icon(
-                    Icons.info_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    NAlertDialog(
-                      title: Text(
-                        "Tentang Aplikasi",
-                        style: Style().headline,
-                      ),
-                      content: Container(
-                        width: context.widthPct(.5),
-                        height: context.heightPct(.4),
-                        child: MediaQuery.removePadding(
-                          removeTop: true,
-                          removeBottom: true,
-                          context: context,
-                          child: CupertinoScrollbar(
-                            child: ListView(
-                              children: [
-                                Center(
-                                  child:
-                                      Image.asset("assets/logo_horizontal.png"),
-                                ),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Text(
-                                    "Sumber data doa :\nApa Doanya app\n\nTerima kasih sudah\nmenggunakan Moodo :D\n",
-                                    style: Style().body,
-                                    textAlign: TextAlign.center,
+                      );
+                    },
+                  );
+                }),
+            // ANCHOR Tentang aplikasi
+            SafeArea(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                    icon: Icon(
+                      Icons.info_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      NAlertDialog(
+                        title: Text(
+                          "Tentang Aplikasi",
+                          style: Style().headline,
+                        ),
+                        content: Container(
+                          width: context.widthPct(.5),
+                          height: context.heightPct(.4),
+                          child: MediaQuery.removePadding(
+                            removeTop: true,
+                            removeBottom: true,
+                            context: context,
+                            child: CupertinoScrollbar(
+                              child: ListView(
+                                children: [
+                                  Center(
+                                    child: Image.asset(
+                                        "assets/logo_horizontal.png"),
                                   ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Text(
-                                    "😎 nabilrei 😎\n😄 hantsnm 😄\n😇 rennyatikas 😇\n🤗 cayne.dameron 🤗\n",
-                                    style:
-                                        Style(styleColor: Colors.grey.shade600)
-                                            .caption,
-                                    textAlign: TextAlign.center,
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      "Sumber data doa :\nApa Doanya app\n\nTerima kasih sudah\nmenggunakan Moodo :D\n",
+                                      style: Style().body,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Text(
-                                    "Ilustrasi :\nhttps://lottiefiles.com/rizwanrasool\nhttps://lottiefiles.com/crestart\n",
-                                    style:
-                                        Style(styleColor: Colors.grey.shade600)
-                                            .caption,
-                                    textAlign: TextAlign.center,
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      "😎 nabilrei 😎\n😄 hantsnm 😄\n😇 rennyatikas 😇\n🤗 cayne.dameron 🤗\n",
+                                      style: Style(
+                                              styleColor: Colors.grey.shade600)
+                                          .caption,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                ),
-                                Center(
-                                  child: Text(
-                                    "versi 1.0.0",
-                                    style:
-                                        Style(styleColor: Colors.grey.shade600)
-                                            .caption,
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      "Ilustrasi :\nhttps://lottiefiles.com/rizwanrasool\nhttps://lottiefiles.com/crestart\n",
+                                      style: Style(
+                                              styleColor: Colors.grey.shade600)
+                                          .caption,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Center(
+                                    child: Text(
+                                      "versi 1.0.0",
+                                      style: Style(
+                                              styleColor: Colors.grey.shade600)
+                                          .caption,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      blur: 2,
-                    ).show(context, transitionType: DialogTransitionType.NONE);
-                  }))
-        ]),
-      ),
-    );
+                        blur: 0,
+                      ).show(context,
+                          transitionType: DialogTransitionType.NONE);
+                    }),
+                // ! tema aplikasi
+                BlocBuilder<ThemeBloc, LinearGradient>(
+                  builder: (context, color) {
+                    return IconButton(
+                        icon: Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          NAlertDialog(
+                            title: Text(
+                              "Pilih warna kesukaanmu :)",
+                              style: Style().headline,
+                            ),
+                            content: MediaQuery.removePadding(
+                              removeTop: true,
+                              removeBottom: true,
+                              context: context,
+                              child: Container(
+                                  width: context.widthPct(.5),
+                                  height: context.heightPct(.6),
+                                  child: ListView(
+                                    children: [
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          bloc.add(ThemeEvent.green);
+                                        },
+                                        child: Container(
+                                          width: 200,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                              gradient: Style().gradasi),
+                                        ),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          bloc.add(ThemeEvent.blue);
+                                        },
+                                        child: Container(
+                                          width: 200,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                              gradient: Style().gradasiBiru),
+                                        ),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          bloc.add(ThemeEvent.purple);
+                                        },
+                                        child: Container(
+                                          width: 200,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                              gradient: Style().gradasiUngu),
+                                        ),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          bloc.add(ThemeEvent.orange);
+                                        },
+                                        child: Container(
+                                          width: 200,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                              gradient: Style().gradasiOrange),
+                                        ),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          bloc.add(ThemeEvent.pink);
+                                          saveData(theme.toString());
+                                        },
+                                        child: Container(
+                                          width: 200,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                              gradient: Style().gradasiPink),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            blur: 0,
+                          ).show(context,
+                              transitionType: DialogTransitionType.NONE);
+                        });
+                  },
+                )
+              ],
+            ))
+          ]),
+        ),
+      );
+    });
   }
 }
-
 
 // Align(
 //   alignment: Alignment.topLeft,
