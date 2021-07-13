@@ -9,33 +9,43 @@ import 'package:moodo/view/homePage.dart';
 import 'package:moodo/view/listDoaPage.dart';
 import 'package:moodo/view/pagiPetang.dart';
 
-Color _themeSolid(Color color) => (color == Colors.pink)
+Color _themeSolid(Color color) => (color.value == 4293467747)
     ? Colors.red
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Colors.blue
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Colors.purple
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Colors.yellow
                 : Colors.teal;
 
-Color _themeActive(Color color) => (color == Colors.pink)
+Color _themeActive(Color color) => (color.value == 4293467747)
     ? Colors.redAccent
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Colors.blueAccent
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Colors.purple
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Colors.orange.shade900
                 : Colors.teal;
 
-LinearGradient _theme(Color color) => (color == Colors.pink)
+LinearGradient _theme(Color color) => (color.value == 4293467747)
     ? Style().gradasiPink
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Style().gradasiBiru
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Style().gradasiUngu
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
+                ? Style().gradasiOrange
+                : Style().gradasi;
+
+LinearGradient _savedTheme(Color color) => (color.value == 4293467747)
+    ? Style().gradasiPink
+    : (color.value == 4280391411)
+        ? Style().gradasiBiru
+        : (color.value == 4288423856)
+            ? Style().gradasiUngu
+            : (color.value == 4294940672)
                 ? Style().gradasiOrange
                 : Style().gradasi;
 

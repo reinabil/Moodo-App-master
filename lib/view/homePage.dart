@@ -18,33 +18,43 @@ import 'package:gradient_text/gradient_text.dart';
 import 'package:moodo/model/BilButton.dart';
 import 'package:snapping_sheet/snapping_sheet.dart';
 
-Color _themeSolid(Color color) => (color == Colors.pink)
+Color _themeSolid(Color color) => (color.value == 4293467747)
     ? Colors.red
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Colors.blue
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Colors.purple
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Colors.yellow
                 : Colors.teal;
 
-Color _themeActive(Color color) => (color == Colors.pink)
+Color _themeActive(Color color) => (color.value == 4293467747)
     ? Colors.redAccent
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Colors.blueAccent
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Colors.purple
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Colors.orange.shade900
                 : Colors.teal;
 
-LinearGradient _theme(Color color) => (color == Colors.pink)
+LinearGradient _theme(Color color) => (color.value == 4293467747)
     ? Style().gradasiPink
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Style().gradasiBiru
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Style().gradasiUngu
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
+                ? Style().gradasiOrange
+                : Style().gradasi;
+
+LinearGradient _savedTheme(Color color) => (color.value == 4293467747)
+    ? Style().gradasiPink
+    : (color.value == 4280391411)
+        ? Style().gradasiBiru
+        : (color.value == 4288423856)
+            ? Style().gradasiUngu
+            : (color.value == 4294940672)
                 ? Style().gradasiOrange
                 : Style().gradasi;
 
@@ -83,8 +93,42 @@ class _HomePageState extends State<HomePage> {
       grabbing: Container(
         child: BlocBuilder<ColorBloc, Color>(
           builder: (context, color) {
-            return GrabbingWidget(
-              color: color,
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                      blurRadius: 25,
+                      color: _themeActive(color).withAlpha(100)),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 20, bottom: 10),
+                    width: 80,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      gradient: _theme(color),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10.0, top: 10),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: GradientText(
+                        "Hai, gimana kabarmu?",
+                        textAlign: TextAlign.center,
+                        style: Style(styleColor: Colors.black).title2,
+                        gradient: _theme(color),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           },
         ),
@@ -98,49 +142,6 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
           child: _sheet(listViewController, bloc),
         ),
-      ),
-    );
-  }
-}
-
-class GrabbingWidget extends StatelessWidget {
-  Color color;
-  GrabbingWidget({required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(blurRadius: 25, color: _themeActive(color).withAlpha(100)),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 20, bottom: 10),
-            width: 80,
-            height: 7,
-            decoration: BoxDecoration(
-              gradient: _theme(color),
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 10.0, top: 10),
-            child: Align(
-              alignment: Alignment.center,
-              child: GradientText(
-                "Hai, gimana kabarmu?",
-                textAlign: TextAlign.center,
-                style: Style(styleColor: Colors.black).title2,
-                gradient: _theme(color),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -776,7 +777,7 @@ class Background extends StatelessWidget {
               constraints: BoxConstraints.expand(),
               decoration: BoxDecoration(
                   // gradient: green,
-                  gradient: _theme(color)),
+                  gradient: _savedTheme(color)),
               duration: Duration(milliseconds: 2000),
               curve: Curves.ease,
             ),
@@ -794,6 +795,8 @@ class Background extends StatelessWidget {
                         Waktu(now).format('EEEE, d MMMM y'),
                         style: Style(styleColor: Colors.white).body,
                       ),
+                      // ANCHOR SAVED COLOR VALUE
+
                       Text(
                         hijri.toFormat("dd MMMM yyyy"),
                         style: Style(styleColor: Colors.white).caption,

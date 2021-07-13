@@ -12,48 +12,45 @@ import 'package:moodo/view/detailDzikirPage.dart';
 import 'package:recase/recase.dart';
 import 'package:sized_context/sized_context.dart';
 
-Color _themeSolid(Color color) => (color == Colors.pink)
+Color _themeSolid(Color color) => (color.value == 4293467747)
     ? Colors.red
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Colors.blue
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Colors.purple
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Colors.yellow
                 : Colors.teal;
 
-Color _themeActive(Color color) => (color == Colors.pink)
+Color _themeActive(Color color) => (color.value == 4293467747)
     ? Colors.redAccent
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Colors.blueAccent
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Colors.purple
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Colors.orange.shade900
                 : Colors.teal;
 
-LinearGradient _theme(Color color) => (color == Colors.pink)
+LinearGradient _theme(Color color) => (color.value == 4293467747)
     ? Style().gradasiPink
-    : (color == Colors.blue)
+    : (color.value == 4280391411)
         ? Style().gradasiBiru
-        : (color == Colors.purple)
+        : (color.value == 4288423856)
             ? Style().gradasiUngu
-            : (color == Colors.orange)
+            : (color.value == 4294940672)
                 ? Style().gradasiOrange
                 : Style().gradasi;
 
-// ! Beda Sendiri ya INI
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red.shade900
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue.shade900
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple.shade900
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.deepOrange.shade900
-                    : Colors.teal.shade900;
+LinearGradient _savedTheme(Color color) => (color.value == 4293467747)
+    ? Style().gradasiPink
+    : (color.value == 4280391411)
+        ? Style().gradasiBiru
+        : (color.value == 4288423856)
+            ? Style().gradasiUngu
+            : (color.value == 4294940672)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 class ListDzikirPage extends StatefulWidget {
   final String dzikirVar;
@@ -223,10 +220,10 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                     alignment: Alignment.bottomCenter,
                     child: AnimatedContainer(
                       width: (message == "Scroll Update")
-                          ? 0
+                          ? context.widthPct(.39)
                           : context.widthPct(.42),
                       height: (message == "Scroll Update")
-                          ? 0
+                          ? context.heightPct(.10)
                           : context.heightPct(.13),
                       duration: Duration(milliseconds: 500),
                       curve: Curves.ease,
@@ -446,103 +443,101 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
     Dzikir dzikir = _tambahWaktu()[index];
     return BlocBuilder<ColorBloc, Color>(
       builder: (context, color) {
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 24),
-            padding: EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Center(
-                    child: SizedBox(
-                      width: context.widthPct(.88),
-                      child: GradientText(
-                        dzikir.judul!,
-                        gradient: _theme(color),
-                        style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                  width: context.widthPct(.88),
-                  child: Center(
-                    child: Text(
-                      "Dibaca ${dzikir.dibaca}",
-                      style: Style(styleColor: Colors.grey.shade600).body,
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Center(
+                  child: SizedBox(
+                    width: context.widthPct(.88),
+                    child: GradientText(
+                      dzikir.judul!,
+                      gradient: _theme(color),
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: context.widthPct(.88),
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, right: 16, top: 8),
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    dzikir.lafaz!,
-                                    style: TextStyle(
-                                        fontSize: 28, fontFamily: "Sil"),
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            DetailDzikirPage(
-                                              dzikir: dzikir,
-                                            )),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GradientText(
-                                    "Baca selengkapnya",
-                                    gradient: _theme(color),
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: "Poppins",
-                                        decoration: TextDecoration.underline),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+              ),
+              SizedBox(
+                height: 30,
+                width: context.widthPct(.88),
+                child: Center(
+                  child: Text(
+                    "Dibaca ${dzikir.dibaca}",
+                    style: Style(styleColor: Colors.grey.shade600).body,
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(
+                width: context.widthPct(.88),
+                child: Card(
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16.0, right: 16, top: 8),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  dzikir.lafaz!,
+                                  style: TextStyle(
+                                      fontSize: 28, fontFamily: "Sil"),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          DetailDzikirPage(
+                                            dzikir: dzikir,
+                                          )),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GradientText(
+                                  "Baca selengkapnya",
+                                  gradient: _theme(color),
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "Poppins",
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

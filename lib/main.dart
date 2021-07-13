@@ -52,7 +52,7 @@ LinearGradient _bg(Color color) => (color == Colors.pink)
             : (color == Colors.orange)
                 ? Style().gradasiOrange2
                 : Style().gradasi2;
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getTemporaryDirectory(),
@@ -91,42 +91,39 @@ class Moodo extends StatefulWidget {
 class _MoodoState extends State<Moodo> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ColorBloc>(create: (context) => ColorBloc(Colors.green)),
+        BlocProvider<CountBloc>(create: (context) => CountBloc(0)),
+      ],
+      child: MaterialApp(
+        // debugShowCheckedModeBanner: false,
+        // title: "Moodo",
+        // theme: ThemeData(
+        //     // Define the default brightness and colors.
+        //     primaryColor: colorSolid(theme),
+        //     accentColor: colorAccent(theme)),
+
         debugShowCheckedModeBanner: false,
-        title: 'Moodo',
-        home: BlocProvider<ColorBloc>(
-          create: (_) => ColorBloc(Colors.green),
-          child: BlocBuilder<ColorBloc, Color>(
+        title: "Moodo",
+
+        home: SplashScreenView(
+          home: BlocBuilder<ColorBloc, Color>(
             builder: (context, color) {
-              return BlocProvider<CountBloc>(
-                create: (context) => CountBloc(0),
-                child: MaterialApp(
-                  // debugShowCheckedModeBanner: false,
-                  // title: "Moodo",
-                  // theme: ThemeData(
-                  //     // Define the default brightness and colors.
-                  //     primaryColor: colorSolid(theme),
-                  //     accentColor: colorAccent(theme)),
-
-                  debugShowCheckedModeBanner: false,
-                  title: "Moodo",
-
-                  home: SplashScreenView(
-                    home: MainPage(
-                      themeData: _theme(color),
-                    ),
-                    duration: 2000,
-                    imageSize: 100,
-                    imageSrc: "images/logo.png",
-                    text: "Du'a for your daily mood",
-                    textType: TextType.ColorizeAnimationText,
-                    textStyle: TextStyle(fontSize: 14, fontFamily: "Poppins"),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
+              return MainPage(
+                themeData: _theme(color),
               );
             },
           ),
-        ));
+          duration: 2000,
+          imageSize: 100,
+          imageSrc: "images/logo.png",
+          text: "Du'a for your daily mood",
+          textType: TextType.ColorizeAnimationText,
+          textStyle: TextStyle(fontSize: 14, fontFamily: "Poppins"),
+          backgroundColor: Colors.white,
+        ),
+      ),
+    );
   }
 }
