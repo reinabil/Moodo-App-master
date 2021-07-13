@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/bloc/favBloc.dart';
-import 'package:moodo/bloc/themeBloc.dart';
 import 'package:moodo/model/countBloc.dart';
 import 'package:moodo/model/style.dart';
 import 'package:moodo/view/mainPage.dart';
@@ -14,9 +13,51 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
-Future main() async {
-  runApp(ProviderScope(child: Moodo()));
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
+
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
+
+LinearGradient _theme(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
+
+LinearGradient _bg(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru2
+        : (color == Colors.purple)
+            ? Style().gradasiUngu2
+            : (color == Colors.orange)
+                ? Style().gradasiOrange2
+                : Style().gradasi2;
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: await getTemporaryDirectory(),
+  );
+  runApp(ProviderScope(child: Moodo()));
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -48,48 +89,40 @@ class Moodo extends StatefulWidget {
 }
 
 class _MoodoState extends State<Moodo> {
-  Future<String> getData() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString('theme') ?? null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Moodo',
-        home: MultiBlocProvider(
-          providers: [
-            BlocProvider<ThemeBloc>(
-              create: (BuildContext context) => ThemeBloc(Style().gradasi),
-            ),
-            BlocProvider<CountBloc>(
-                create: (BuildContext context) => CountBloc(0))
-          ],
-          child: BlocBuilder<ThemeBloc, LinearGradient>(
-            builder: (context, themeData) {
-              return MaterialApp(
-                // debugShowCheckedModeBanner: false,
-                // title: "Moodo",
-                // theme: ThemeData(
-                //     // Define the default brightness and colors.
-                //     primaryColor: colorSolid(theme),
-                //     accentColor: colorAccent(theme)),
+        home: BlocProvider<ColorBloc>(
+          create: (_) => ColorBloc(Colors.green),
+          child: BlocBuilder<ColorBloc, Color>(
+            builder: (context, color) {
+              return BlocProvider<CountBloc>(
+                create: (context) => CountBloc(0),
+                child: MaterialApp(
+                  // debugShowCheckedModeBanner: false,
+                  // title: "Moodo",
+                  // theme: ThemeData(
+                  //     // Define the default brightness and colors.
+                  //     primaryColor: colorSolid(theme),
+                  //     accentColor: colorAccent(theme)),
 
-                debugShowCheckedModeBanner: false,
-                title: "Moodo",
+                  debugShowCheckedModeBanner: false,
+                  title: "Moodo",
 
-                home: SplashScreenView(
-                  home: MainPage(
-                    themeData: themeData,
+                  home: SplashScreenView(
+                    home: MainPage(
+                      themeData: _theme(color),
+                    ),
+                    duration: 2000,
+                    imageSize: 100,
+                    imageSrc: "images/logo.png",
+                    text: "Du'a for your daily mood",
+                    textType: TextType.ColorizeAnimationText,
+                    textStyle: TextStyle(fontSize: 14, fontFamily: "Poppins"),
+                    backgroundColor: Colors.white,
                   ),
-                  duration: 2000,
-                  imageSize: 100,
-                  imageSrc: "images/logo.png",
-                  text: "Du'a for your daily mood",
-                  textType: TextType.ColorizeAnimationText,
-                  textStyle: TextStyle(fontSize: 14, fontFamily: "Poppins"),
-                  backgroundColor: Colors.white,
                 ),
               );
             },

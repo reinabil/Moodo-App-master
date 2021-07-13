@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gradient_text/gradient_text.dart';
-import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/model/doa.dart';
 import 'package:moodo/model/style.dart';
 import 'package:sized_context/sized_context.dart';
@@ -9,51 +9,35 @@ import 'package:recase/recase.dart';
 
 import 'detailDoaPage.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
-
-LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
+LinearGradient _theme(Color color) => (color == Colors.pink)
     ? Style().gradasiPink
-    : (theme == Style().gradasiBiru)
-        ? Style().gradasiBiru2
-        : (theme == Style().gradasiUngu)
-            ? Style().gradasiUngu2
-            : (theme == Style().gradasiOrange)
-                ? Style().gradasiOrange2
-                : Style().gradasi2;
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 class MoodPage extends StatefulWidget {
   final String moodo;
@@ -84,15 +68,15 @@ class _MoodPageState extends State<MoodPage> {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          child: BlocBuilder<ThemeBloc, LinearGradient>(
-            builder: (context, theme) {
+          child: BlocBuilder<ColorBloc, Color>(
+            builder: (context, color) {
               return Container(
                 margin: EdgeInsets.all(11),
                 decoration: BoxDecoration(
-                  gradient: theme,
+                  gradient: _theme(color),
                   boxShadow: [
                     BoxShadow(
-                        color: colorActive(theme).withAlpha(100),
+                        color: _themeActive(color).withAlpha(100),
                         offset: Offset(1, 2),
                         blurRadius: 3)
                   ],
@@ -119,8 +103,8 @@ class _MoodPageState extends State<MoodPage> {
           ),
         ),
       ),
-      body: BlocBuilder<ThemeBloc, LinearGradient>(
-        builder: (context, theme) {
+      body: BlocBuilder<ColorBloc, Color>(
+        builder: (context, color) {
           return Stack(
             children: <Widget>[
               Container(
@@ -138,7 +122,7 @@ class _MoodPageState extends State<MoodPage> {
                       ),
                       Text(
                         moodo,
-                        style: Style(styleColor: colorActive(theme)).title1,
+                        style: Style(styleColor: _themeActive(color)).title1,
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -161,7 +145,7 @@ class _MoodPageState extends State<MoodPage> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: colorActive(theme).withAlpha(100),
+                            color: _themeActive(color).withAlpha(100),
                             blurRadius: 6.0,
                             offset: Offset(0, -7),
                           )
@@ -189,7 +173,7 @@ class _MoodPageState extends State<MoodPage> {
 
                                         if (doa.mood.toString().toLowerCase() ==
                                             moodo.toLowerCase())
-                                          return _itemList(index, theme);
+                                          return _itemList(index, color);
                                         // if not return empty container
                                         else
                                           return Container();
@@ -225,17 +209,17 @@ class _MoodPageState extends State<MoodPage> {
 //                             else
 //                               return Container();
 
-  _itemList(index, theme) {
+  _itemList(index, color) {
     Doa doa = doaList![index];
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            gradient: theme,
+            gradient: _theme(color),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                  color: colorActive(theme).withAlpha(100),
+                  color: _themeActive(color).withAlpha(100),
                   blurRadius: 3,
                   offset: Offset(2, 5)),
             ]),
@@ -249,7 +233,7 @@ class _MoodPageState extends State<MoodPage> {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      DetailDoa(doa: doa, theme: theme)),
+                      DetailDoa(doa: doa, color: color)),
             );
           },
           trailing: Icon(

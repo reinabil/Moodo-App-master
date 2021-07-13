@@ -9,51 +9,35 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recase/recase.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
-
-LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
+LinearGradient _theme(Color color) => (color == Colors.pink)
     ? Style().gradasiPink
-    : (theme == Style().gradasiBiru)
-        ? Style().gradasiBiru2
-        : (theme == Style().gradasiUngu)
-            ? Style().gradasiUngu2
-            : (theme == Style().gradasiOrange)
-                ? Style().gradasiOrange2
-                : Style().gradasi2;
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 final sharedPrefs = FutureProvider<SharedPreferences>(
     (_) async => await SharedPreferences.getInstance());
@@ -84,10 +68,10 @@ class FavoriteIds extends StateNotifier<List<String>> {
 }
 
 class DetailDoa extends ConsumerWidget {
-  const DetailDoa({required this.doa, required this.theme});
+  const DetailDoa({required this.doa, required this.color});
 
   final Doa doa;
-  final LinearGradient theme;
+  final Color color;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -106,10 +90,10 @@ class DetailDoa extends ConsumerWidget {
           child: Container(
             margin: EdgeInsets.all(11),
             decoration: BoxDecoration(
-              gradient: theme,
+              gradient: _theme(color),
               boxShadow: [
                 BoxShadow(
-                    color: colorActive(theme).withAlpha(100),
+                    color: _themeActive(color).withAlpha(100),
                     offset: Offset(1, 2),
                     blurRadius: 3)
               ],
@@ -178,7 +162,7 @@ class DetailDoa extends ConsumerWidget {
         child: Stack(children: <Widget>[
           Container(
               constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(gradient: theme)),
+              decoration: BoxDecoration(gradient: _theme(color))),
           Container(
             child: ListView(
               children: <Widget>[
@@ -224,7 +208,7 @@ class DetailDoa extends ConsumerWidget {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Card(
                     elevation: 7,
-                    shadowColor: colorActive(theme).withAlpha(100),
+                    shadowColor: _themeActive(color).withAlpha(100),
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     shape: RoundedRectangleBorder(
@@ -247,7 +231,7 @@ class DetailDoa extends ConsumerWidget {
                               style: TextStyle(
                                 fontFamily: "Poppins",
                                 fontStyle: FontStyle.italic,
-                                color: colorActive(theme),
+                                color: _themeActive(color),
                                 fontSize: 14,
                               ),
                               textAlign: TextAlign.left,
@@ -295,7 +279,7 @@ class DetailDoa extends ConsumerWidget {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Card(
                     elevation: 7,
-                    shadowColor: colorActive(theme).withAlpha(100),
+                    shadowColor: _themeActive(color).withAlpha(100),
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     shape: RoundedRectangleBorder(
@@ -345,7 +329,7 @@ class DetailDoa extends ConsumerWidget {
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Card(
                     elevation: 7,
-                    shadowColor: colorActive(theme).withAlpha(100),
+                    shadowColor: _themeActive(color).withAlpha(100),
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     shape: RoundedRectangleBorder(

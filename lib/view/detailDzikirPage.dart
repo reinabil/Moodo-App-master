@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/model/dzikir.dart';
 import 'package:moodo/model/style.dart';
 import 'package:sized_context/sized_context.dart';
@@ -8,41 +8,45 @@ import 'package:share/share.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:recase/recase.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
+LinearGradient _theme(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
+
+LinearGradient _bg(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru2
+        : (color == Colors.purple)
+            ? Style().gradasiUngu2
+            : (color == Colors.orange)
+                ? Style().gradasiOrange2
+                : Style().gradasi2;
 
 class DetailDzikirPage extends StatelessWidget {
   const DetailDzikirPage({
@@ -59,8 +63,8 @@ class DetailDzikirPage extends StatelessWidget {
       Share.shareFiles([imageFile.path]);
     }
 
-    return BlocBuilder<ThemeBloc, LinearGradient>(
-      builder: (context2, theme) {
+    return BlocBuilder<ColorBloc, Color>(
+      builder: (context2, color) {
         return Scaffold(
           backgroundColor: Color.fromARGB(255, 248, 248, 248),
           appBar: AppBar(
@@ -68,10 +72,10 @@ class DetailDzikirPage extends StatelessWidget {
               child: Container(
                 margin: EdgeInsets.all(11),
                 decoration: BoxDecoration(
-                  gradient: theme,
+                  gradient: _theme(color),
                   boxShadow: [
                     BoxShadow(
-                        color: colorActive(theme),
+                        color: _themeActive(color),
                         offset: Offset(1, 2),
                         blurRadius: 3)
                   ],
@@ -122,7 +126,7 @@ class DetailDzikirPage extends StatelessWidget {
             child: Stack(children: <Widget>[
               Container(
                   constraints: BoxConstraints.expand(),
-                  decoration: BoxDecoration(gradient: theme)),
+                  decoration: BoxDecoration(gradient: _theme(color))),
               Container(
                 child: ListView(
                   children: <Widget>[
@@ -168,7 +172,7 @@ class DetailDzikirPage extends StatelessWidget {
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       child: Card(
                         elevation: 7,
-                        shadowColor: colorActive(theme).withAlpha(100),
+                        shadowColor: _themeActive(color).withAlpha(100),
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         shape: RoundedRectangleBorder(
@@ -187,16 +191,18 @@ class DetailDzikirPage extends StatelessWidget {
                               Container(
                                 margin: EdgeInsets.only(top: 16),
                                 alignment: Alignment.centerLeft,
-                                child: Text(
-                                  dzikir.latin!,
-                                  style: TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontStyle: FontStyle.italic,
-                                    color: colorActive(theme),
-                                    fontSize: 14,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
+                                child: (dzikir.latin != "")
+                                    ? Text(
+                                        dzikir.latin!,
+                                        style: TextStyle(
+                                          fontFamily: "Poppins",
+                                          fontStyle: FontStyle.italic,
+                                          color: _themeActive(color),
+                                          fontSize: 14,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      )
+                                    : null,
                               ),
                             ],
                           ),
@@ -240,7 +246,7 @@ class DetailDzikirPage extends StatelessWidget {
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       child: Card(
                         elevation: 7,
-                        shadowColor: colorActive(theme).withAlpha(100),
+                        shadowColor: _themeActive(color).withAlpha(100),
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         shape: RoundedRectangleBorder(
@@ -292,7 +298,7 @@ class DetailDzikirPage extends StatelessWidget {
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       child: Card(
                         elevation: 7,
-                        shadowColor: colorActive(theme).withAlpha(100),
+                        shadowColor: _themeActive(color).withAlpha(100),
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         shape: RoundedRectangleBorder(

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/model/doa.dart';
 import 'package:moodo/model/style.dart';
 import 'package:moodo/view/detailDoaPage.dart';
@@ -9,49 +9,43 @@ import 'package:sized_context/sized_context.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:recase/recase.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
-
-LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
+LinearGradient _theme(Color color) => (color == Colors.pink)
     ? Style().gradasiPink
-    : (theme == Style().gradasiBiru)
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
+
+LinearGradient _bg(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
         ? Style().gradasiBiru2
-        : (theme == Style().gradasiUngu)
+        : (color == Colors.purple)
             ? Style().gradasiUngu2
-            : (theme == Style().gradasiOrange)
+            : (color == Colors.orange)
                 ? Style().gradasiOrange2
                 : Style().gradasi2;
 
@@ -80,8 +74,8 @@ class _ListDoaPageState extends State<ListDoaPage> {
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: BlocBuilder<ThemeBloc, LinearGradient>(
-          builder: (context2, theme) {
+        body: BlocBuilder<ColorBloc, Color>(
+          builder: (context2, color) {
             return GestureDetector(
               onTap: () {
                 FocusScopeNode currentFocus = FocusScope.of(context);
@@ -93,7 +87,7 @@ class _ListDoaPageState extends State<ListDoaPage> {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                      gradient: bg(theme),
+                      gradient: _bg(color),
                     ),
                   ),
                   //heading
@@ -107,7 +101,7 @@ class _ListDoaPageState extends State<ListDoaPage> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: colorActive(theme).withAlpha(100),
+                          color: _themeActive(color).withAlpha(100),
                           blurRadius: 6.0,
                           offset: Offset(0, -7),
                         )
@@ -127,7 +121,7 @@ class _ListDoaPageState extends State<ListDoaPage> {
                               fontWeight: FontWeight.bold,
                               fontSize: 24,
                             ),
-                            gradient: bg(theme),
+                            gradient: _bg(color),
                           ),
                         ),
                         //ANCHOR FutureBuilder
@@ -205,8 +199,8 @@ class _ListDoaPageState extends State<ListDoaPage> {
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
       ),
-      child: BlocBuilder<ThemeBloc, LinearGradient>(
-        builder: (context, theme) {
+      child: BlocBuilder<ColorBloc, Color>(
+        builder: (context, color) {
           return ListTile(
             title: Text(doa.judul!.titleCase,
                 style: TextStyle(fontFamily: "Poppins", fontSize: 16)),
@@ -214,12 +208,12 @@ class _ListDoaPageState extends State<ListDoaPage> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        DetailDoa(doa: doa, theme: theme)),
+                        DetailDoa(doa: doa, color: color)),
               );
             },
             trailing: Icon(
               Icons.arrow_forward_ios_rounded,
-              color: colorActive(theme),
+              color: _themeActive(color),
             ),
           );
         },
@@ -229,8 +223,8 @@ class _ListDoaPageState extends State<ListDoaPage> {
 
   _searchBar() {
     return SingleChildScrollView(
-      child: BlocBuilder<ThemeBloc, LinearGradient>(
-        builder: (context, theme) {
+      child: BlocBuilder<ColorBloc, Color>(
+        builder: (context, color) {
           return Center(
             child: Container(
               margin: EdgeInsets.only(top: 75),
@@ -245,9 +239,9 @@ class _ListDoaPageState extends State<ListDoaPage> {
                   data: new ThemeData(
                       primaryColor: Colors.grey[200],
                       textSelectionTheme: TextSelectionThemeData(
-                        cursorColor: colorActive(theme).withAlpha(100),
-                        selectionColor: colorActive(theme).withAlpha(70),
-                        selectionHandleColor: colorActive(theme),
+                        cursorColor: _themeActive(color).withAlpha(100),
+                        selectionColor: _themeActive(color).withAlpha(70),
+                        selectionHandleColor: _themeActive(color),
                       )),
                   child: TextField(
                     // controller to get text
@@ -272,7 +266,7 @@ class _ListDoaPageState extends State<ListDoaPage> {
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(200),
                           borderSide: new BorderSide(
-                              color: colorActive(theme).withAlpha(100))),
+                              color: _themeActive(color).withAlpha(100))),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(200),
                         borderSide: new BorderSide(color: Colors.grey[200]!),

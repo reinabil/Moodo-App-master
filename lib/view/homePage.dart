@@ -8,7 +8,6 @@ import 'package:gradient_text/gradient_text.dart';
 import 'package:format_indonesia/format_indonesia.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moodo/bloc/colorBloc.dart';
-import 'package:moodo/bloc/themeBloc.dart';
 import 'package:moodo/model/doa.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,41 +18,35 @@ import 'package:gradient_text/gradient_text.dart';
 import 'package:moodo/model/BilButton.dart';
 import 'package:snapping_sheet/snapping_sheet.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
+LinearGradient _theme(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 class HomePage extends StatefulWidget {
   @override
@@ -63,7 +56,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    ThemeBloc bloc = BlocProvider.of<ThemeBloc>(context);
+    ColorBloc bloc = BlocProvider.of<ColorBloc>(context);
     final ScrollController listViewController = new ScrollController();
     return SnappingSheet(
       child: Background(),
@@ -88,10 +81,10 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
       grabbing: Container(
-        child: BlocBuilder<ThemeBloc, LinearGradient>(
-          builder: (context, theme) {
+        child: BlocBuilder<ColorBloc, Color>(
+          builder: (context, color) {
             return GrabbingWidget(
-              theme: theme,
+              color: color,
             );
           },
         ),
@@ -110,55 +103,9 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Align(
-//   alignment: Alignment.topLeft,
-//   child: Text(
-//     "Pilih tema warna",
-//     style: Style().headline,
-//     textAlign: TextAlign.left,
-//   ),
-// ),
-// ANCHOR Button tema
-// Container(
-//   margin: EdgeInsets.symmetric(vertical: 0),
-//   child: Wrap(
-//     spacing: 16,
-//     children: [
-//       GestureDetector(
-//         onTap: () {},
-//         child: Material(
-//           borderRadius: BorderRadius.circular(100),
-//           elevation: 10,
-//           shadowColor: Colors.teal,
-//           child: Stack(
-//             children: <Widget>[
-//               SizedBox(
-//                 width: context.widthPct(.14),
-//                 height: context.widthPct(.14),
-//                 child: Material(
-//                     borderRadius:
-//                         BorderRadius.circular(100),
-//                     color: Colors.transparent),
-//               ),
-//               Container(
-//                 width: context.widthPct(.14),
-//                 height: context.widthPct(.14),
-//                 decoration: BoxDecoration(
-//                     gradient: Style().gradasi,
-//                     borderRadius:
-//                         BorderRadius.circular(100)),
-//               )
-//             ],
-//           ),
-//         ),
-//       )
-//     ],
-//   ),
-// ),
-
 class GrabbingWidget extends StatelessWidget {
-  LinearGradient theme;
-  GrabbingWidget({required this.theme});
+  Color color;
+  GrabbingWidget({required this.color});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -166,7 +113,7 @@ class GrabbingWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         boxShadow: [
-          BoxShadow(blurRadius: 25, color: colorActive(theme).withAlpha(100)),
+          BoxShadow(blurRadius: 25, color: _themeActive(color).withAlpha(100)),
         ],
       ),
       child: Column(
@@ -177,7 +124,7 @@ class GrabbingWidget extends StatelessWidget {
             width: 80,
             height: 7,
             decoration: BoxDecoration(
-              gradient: theme,
+              gradient: _theme(color),
               borderRadius: BorderRadius.circular(5),
             ),
           ),
@@ -189,7 +136,7 @@ class GrabbingWidget extends StatelessWidget {
                 "Hai, gimana kabarmu?",
                 textAlign: TextAlign.center,
                 style: Style(styleColor: Colors.black).title2,
-                gradient: theme,
+                gradient: _theme(color),
               ),
             ),
           ),
@@ -199,9 +146,9 @@ class GrabbingWidget extends StatelessWidget {
   }
 }
 
-_sheet(ScrollController s, ThemeBloc bloc) {
-  return BlocBuilder<ThemeBloc, LinearGradient>(
-    builder: (context, theme) {
+_sheet(ScrollController s, ColorBloc bloc) {
+  return BlocBuilder<ColorBloc, Color>(
+    builder: (context, color) {
       return ListView(
         padding: EdgeInsets.all(0),
         controller: s,
@@ -213,7 +160,7 @@ _sheet(ScrollController s, ThemeBloc bloc) {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 4,
-            shadowColor: colorActive(theme).withAlpha(100),
+            shadowColor: _themeActive(color).withAlpha(100),
             child: Container(
               padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
               child: Column(
@@ -228,7 +175,7 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                         fontFamily: "Poppins",
                         fontSize: 12,
                         fontStyle: FontStyle.italic,
-                        color: colorActive(theme)),
+                        color: _themeActive(color)),
                     textAlign: TextAlign.left,
                   ),
                   SizedBox(
@@ -331,7 +278,7 @@ _sheet(ScrollController s, ThemeBloc bloc) {
             "Apa warna kesukaanmu?",
             textAlign: TextAlign.center,
             style: Style(styleColor: Colors.black).title2,
-            gradient: theme,
+            gradient: _theme(color),
           ),
           Container(
               width: context.widthPct(.5),
@@ -348,12 +295,12 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: colorActive(theme).withAlpha(100),
+                          color: _themeActive(color).withAlpha(100),
                           blurRadius: 21,
                           offset: Offset(0, 10),
                         ),
                       ],
-                      gradient: theme,
+                      gradient: _theme(color),
                     ),
                     duration: Duration(milliseconds: 700),
                     child: ListView(
@@ -364,13 +311,15 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                           padding: const EdgeInsets.all(16.0),
                           child: GestureDetector(
                             onTap: () {
-                              bloc.add(ThemeEvent.green);
+                              bloc.add(ColorEvent.green);
                             },
                             child: AnimatedContainer(
                               curve: Curves.bounceOut,
                               duration: Duration(milliseconds: 700),
-                              width: (theme == Style().gradasi) ? 70 : 55,
-                              height: (theme == Style().gradasi) ? 70 : 55,
+                              width:
+                                  (_theme(color) == Style().gradasi) ? 70 : 55,
+                              height:
+                                  (_theme(color) == Style().gradasi) ? 70 : 55,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -381,8 +330,10 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                                   BoxShadow(
                                     color: Color(0x3f000000),
                                     blurRadius:
-                                        (theme == Style().gradasi) ? 10 : 23,
-                                    offset: (theme == Style().gradasi)
+                                        (_theme(color) == Style().gradasi)
+                                            ? 10
+                                            : 23,
+                                    offset: (_theme(color) == Style().gradasi)
                                         ? Offset(0, 10)
                                         : Offset(0, 6),
                                   ),
@@ -404,13 +355,17 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                           padding: const EdgeInsets.all(16.0),
                           child: GestureDetector(
                             onTap: () {
-                              bloc.add(ThemeEvent.blue);
+                              bloc.add(ColorEvent.blue);
                             },
                             child: AnimatedContainer(
                               curve: Curves.bounceOut,
                               duration: Duration(milliseconds: 700),
-                              width: (theme == Style().gradasiBiru) ? 70 : 55,
-                              height: (theme == Style().gradasiBiru) ? 70 : 55,
+                              width: (_theme(color) == Style().gradasiBiru)
+                                  ? 70
+                                  : 55,
+                              height: (_theme(color) == Style().gradasiBiru)
+                                  ? 70
+                                  : 55,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -420,12 +375,14 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                                 boxShadow: [
                                   BoxShadow(
                                     color: Color(0x3f000000),
-                                    blurRadius: (theme == Style().gradasiBiru)
-                                        ? 10
-                                        : 23,
-                                    offset: (theme == Style().gradasiBiru)
-                                        ? Offset(0, 10)
-                                        : Offset(0, 6),
+                                    blurRadius:
+                                        (_theme(color) == Style().gradasiBiru)
+                                            ? 10
+                                            : 23,
+                                    offset:
+                                        (_theme(color) == Style().gradasiBiru)
+                                            ? Offset(0, 10)
+                                            : Offset(0, 6),
                                   ),
                                 ],
                                 gradient: Style().gradasiBiru,
@@ -438,13 +395,17 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                           padding: const EdgeInsets.all(16.0),
                           child: GestureDetector(
                             onTap: () {
-                              bloc.add(ThemeEvent.purple);
+                              bloc.add(ColorEvent.purple);
                             },
                             child: AnimatedContainer(
                               curve: Curves.bounceOut,
                               duration: Duration(milliseconds: 700),
-                              width: (theme == Style().gradasiUngu) ? 70 : 55,
-                              height: (theme == Style().gradasiUngu) ? 70 : 55,
+                              width: (_theme(color) == Style().gradasiUngu)
+                                  ? 70
+                                  : 55,
+                              height: (_theme(color) == Style().gradasiUngu)
+                                  ? 70
+                                  : 55,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -454,12 +415,14 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                                 boxShadow: [
                                   BoxShadow(
                                     color: Color(0x3f000000),
-                                    blurRadius: (theme == Style().gradasiUngu)
-                                        ? 10
-                                        : 23,
-                                    offset: (theme == Style().gradasiUngu)
-                                        ? Offset(0, 10)
-                                        : Offset(0, 6),
+                                    blurRadius:
+                                        (_theme(color) == Style().gradasiUngu)
+                                            ? 10
+                                            : 23,
+                                    offset:
+                                        (_theme(color) == Style().gradasiUngu)
+                                            ? Offset(0, 10)
+                                            : Offset(0, 6),
                                   ),
                                 ],
                                 gradient: Style().gradasiUngu,
@@ -472,14 +435,17 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                           padding: const EdgeInsets.all(16.0),
                           child: GestureDetector(
                             onTap: () {
-                              bloc.add(ThemeEvent.orange);
+                              bloc.add(ColorEvent.orange);
                             },
                             child: AnimatedContainer(
                               curve: Curves.bounceOut,
                               duration: Duration(milliseconds: 700),
-                              width: (theme == Style().gradasiOrange) ? 70 : 55,
-                              height:
-                                  (theme == Style().gradasiOrange) ? 70 : 55,
+                              width: (_theme(color) == Style().gradasiOrange)
+                                  ? 70
+                                  : 55,
+                              height: (_theme(color) == Style().gradasiOrange)
+                                  ? 70
+                                  : 55,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -489,12 +455,14 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                                 boxShadow: [
                                   BoxShadow(
                                     color: Color(0x3f000000),
-                                    blurRadius: (theme == Style().gradasiOrange)
-                                        ? 10
-                                        : 23,
-                                    offset: (theme == Style().gradasiOrange)
-                                        ? Offset(0, 10)
-                                        : Offset(0, 6),
+                                    blurRadius:
+                                        (_theme(color) == Style().gradasiOrange)
+                                            ? 10
+                                            : 23,
+                                    offset:
+                                        (_theme(color) == Style().gradasiOrange)
+                                            ? Offset(0, 10)
+                                            : Offset(0, 6),
                                   ),
                                 ],
                                 gradient: Style().gradasiOrange,
@@ -507,13 +475,17 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                           padding: const EdgeInsets.all(16.0),
                           child: GestureDetector(
                             onTap: () {
-                              bloc.add(ThemeEvent.pink);
+                              bloc.add(ColorEvent.pink);
                             },
                             child: AnimatedContainer(
                               curve: Curves.bounceOut,
                               duration: Duration(milliseconds: 700),
-                              width: (theme == Style().gradasiPink) ? 70 : 55,
-                              height: (theme == Style().gradasiPink) ? 70 : 55,
+                              width: (_theme(color) == Style().gradasiPink)
+                                  ? 70
+                                  : 55,
+                              height: (_theme(color) == Style().gradasiPink)
+                                  ? 70
+                                  : 55,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -523,12 +495,14 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                                 boxShadow: [
                                   BoxShadow(
                                     color: Color(0x3f000000),
-                                    blurRadius: (theme == Style().gradasiPink)
-                                        ? 10
-                                        : 23,
-                                    offset: (theme == Style().gradasiPink)
-                                        ? Offset(0, 10)
-                                        : Offset(0, 6),
+                                    blurRadius:
+                                        (_theme(color) == Style().gradasiPink)
+                                            ? 10
+                                            : 23,
+                                    offset:
+                                        (_theme(color) == Style().gradasiPink)
+                                            ? Offset(0, 10)
+                                            : Offset(0, 6),
                                   ),
                                 ],
                                 gradient: Style().gradasiPink,
@@ -544,7 +518,7 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                   ),
                   Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: _wah(theme)),
+                      child: _wah(_theme(color))),
                   // ! motivasi
                   AnimatedContainer(
                     width: context.widthPct(.7),
@@ -553,15 +527,15 @@ _sheet(ScrollController s, ThemeBloc bloc) {
                       borderRadius: BorderRadius.circular(2000),
                       boxShadow: [
                         BoxShadow(
-                          color: colorActive(theme).withAlpha(100),
+                          color: _themeActive(color).withAlpha(100),
                           blurRadius: 21,
                           offset: Offset(0, 10),
                         ),
                       ],
-                      gradient: theme,
+                      gradient: _theme(color),
                     ),
                     duration: Duration(milliseconds: 500),
-                    child: psikologiWarna(theme),
+                    child: psikologiWarna(_theme(color)),
                   )
                 ],
               )),
@@ -790,11 +764,11 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ScrollController listViewController = new ScrollController();
-    ThemeBloc bloc = BlocProvider.of<ThemeBloc>(context);
+    ColorBloc bloc = BlocProvider.of<ColorBloc>(context);
     return Scaffold(
-      body: BlocBuilder<ThemeBloc, LinearGradient>(
+      body: BlocBuilder<ColorBloc, Color>(
           // ! theme == tema aplikasi
-          builder: (context, theme) {
+          builder: (context, color) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: <Widget>[
@@ -802,7 +776,7 @@ class Background extends StatelessWidget {
               constraints: BoxConstraints.expand(),
               decoration: BoxDecoration(
                   // gradient: green,
-                  gradient: theme),
+                  gradient: _theme(color)),
               duration: Duration(milliseconds: 2000),
               curve: Curves.ease,
             ),
@@ -842,7 +816,7 @@ class Background extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16)),
                                 elevation: 4,
-                                shadowColor: colorActive(theme).withAlpha(100),
+                                shadowColor: _themeActive(color).withAlpha(100),
                                 child: Container(
                                   padding: EdgeInsets.all(24),
                                   child: Column(
@@ -853,7 +827,7 @@ class Background extends StatelessWidget {
                                             fontFamily: "Poppins",
                                             fontWeight: FontWeight.bold,
                                             fontSize: 24),
-                                        gradient: theme,
+                                        gradient: _theme(color),
                                       ),
                                       Text("${doa.judul}",
                                           textAlign: TextAlign.center,
@@ -879,7 +853,7 @@ class Background extends StatelessWidget {
                                             fontFamily: "Poppins",
                                             fontSize: 12,
                                             fontStyle: FontStyle.italic,
-                                            color: colorActive(theme)),
+                                            color: _themeActive(color)),
                                       ),
                                       SizedBox(
                                         height: 10,

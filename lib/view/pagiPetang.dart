@@ -5,7 +5,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:format_indonesia/format_indonesia.dart';
 import 'package:lottie/lottie.dart';
-import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/model/dzikir.dart';
 import 'package:moodo/view/detailDoaPage.dart';
 import 'package:moodo/view/detailDzikirPage.dart';
@@ -13,51 +13,35 @@ import 'package:sized_context/sized_context.dart';
 import 'package:moodo/model/style.dart';
 import 'listDzikirPage.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
-
-LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
-    ? Style().gradasiPink2
-    : (theme == Style().gradasiBiru)
-        ? Style().gradasiBiru2
-        : (theme == Style().gradasiUngu)
-            ? Style().gradasiUngu2
-            : (theme == Style().gradasiOrange)
-                ? Style().gradasiOrange2
-                : Style().gradasi2;
+LinearGradient _theme(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 class PagiPetangPage extends StatefulWidget {
   @override
@@ -72,15 +56,15 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, LinearGradient>(
-      builder: (context, theme) {
+    return BlocBuilder<ColorBloc, Color>(
+      builder: (context, color) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: <Widget>[
             Container(
                 constraints: BoxConstraints.expand(),
                 decoration: BoxDecoration(
-                  gradient: theme,
+                  gradient: _theme(color),
                 )),
             ListView(
               children: [
@@ -103,7 +87,7 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16)),
                         elevation: 4,
-                        shadowColor: colorActive(theme).withAlpha(100),
+                        shadowColor: _themeActive(color).withAlpha(100),
                         child: Container(
                           padding: EdgeInsets.all(24),
                           child: Column(
@@ -114,7 +98,7 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                                     fontFamily: "Poppins",
                                     fontWeight: FontWeight.bold,
                                     fontSize: 24),
-                                gradient: theme,
+                                gradient: _theme(color),
                               ),
                               SizedBox(
                                 height: 10,
@@ -134,7 +118,7 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                                     fontFamily: "Poppins",
                                     fontSize: 12,
                                     fontStyle: FontStyle.italic,
-                                    color: colorActive(theme)),
+                                    color: _themeActive(color)),
                               ),
                               SizedBox(
                                 height: 10,
@@ -168,7 +152,7 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                             topRight: Radius.circular(20.0)),
                         boxShadow: [
                           BoxShadow(
-                            color: colorActive(theme).withAlpha(100),
+                            color: _themeActive(color).withAlpha(100),
                             blurRadius: 6.0,
                             offset: Offset(0, -7),
                           )

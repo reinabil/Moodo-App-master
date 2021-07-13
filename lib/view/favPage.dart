@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/model/doa.dart';
 import 'package:moodo/model/style.dart';
 import 'package:moodo/view/detailDoaPage.dart';
@@ -17,49 +17,43 @@ import 'package:collection/collection.dart';
 // }
 TextEditingController searchTxt = new TextEditingController();
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
-
-LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
+LinearGradient _theme(Color color) => (color == Colors.pink)
     ? Style().gradasiPink
-    : (theme == Style().gradasiBiru)
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
+
+LinearGradient _bg(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
         ? Style().gradasiBiru2
-        : (theme == Style().gradasiUngu)
+        : (color == Colors.purple)
             ? Style().gradasiUngu2
-            : (theme == Style().gradasiOrange)
+            : (color == Colors.orange)
                 ? Style().gradasiOrange2
                 : Style().gradasi2;
 
@@ -79,14 +73,14 @@ class FavPage extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final favoriteIds = watch(FavoriteIds.provider);
 
-    return Scaffold(body: BlocBuilder<ThemeBloc, LinearGradient>(
-      builder: (context, theme) {
+    return Scaffold(body: BlocBuilder<ColorBloc, Color>(
+      builder: (context, color) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(
             children: <Widget>[
               Container(
-                decoration: BoxDecoration(gradient: bg(theme)),
+                decoration: BoxDecoration(gradient: _bg(color)),
               ),
               //heading
               Container(
@@ -98,7 +92,7 @@ class FavPage extends ConsumerWidget {
                       topRight: Radius.circular(26)),
                   boxShadow: [
                     BoxShadow(
-                      color: colorActive(theme).withAlpha(100),
+                      color: _themeActive(color).withAlpha(100),
                       blurRadius: 6.0,
                       offset: Offset(0, -7),
                     )
@@ -154,7 +148,7 @@ class FavPage extends ConsumerWidget {
                                         if (favoriteIds
                                             .contains(doa.id.toString()))
                                           return _itemList(
-                                              context, index, theme);
+                                              context, index, color);
                                         // if not return empty container
                                         else
                                           return Container();
@@ -202,7 +196,7 @@ class FavPage extends ConsumerWidget {
     ));
   }
 
-  _itemList(context, index, theme) {
+  _itemList(context, index, color) {
     Doa doa = doaList![index];
     return Container(
         margin: EdgeInsets.symmetric(horizontal: 24),
@@ -216,11 +210,11 @@ class FavPage extends ConsumerWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      DetailDoa(doa: doa, theme: theme)));
+                      DetailDoa(doa: doa, color: color)));
             },
             trailing: Icon(
               Icons.arrow_forward_ios_rounded,
-              color: colorActive(theme),
+              color: _themeActive(color),
             )));
   }
 }

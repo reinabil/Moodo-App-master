@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gradient_text/gradient_text.dart';
-import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/bloc/colorBloc.dart';
+
 import 'package:moodo/model/countBloc.dart';
 import 'package:moodo/model/dzikir.dart';
 import 'package:moodo/model/style.dart';
@@ -11,17 +12,35 @@ import 'package:moodo/view/detailDzikirPage.dart';
 import 'package:recase/recase.dart';
 import 'package:sized_context/sized_context.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
+
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
+
+LinearGradient _theme(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 // ! Beda Sendiri ya INI
 Color colorAccent(LinearGradient theme) =>
@@ -35,28 +54,6 @@ Color colorAccent(LinearGradient theme) =>
                         theme == Style().gradasiOrange2)
                     ? Colors.deepOrange.shade900
                     : Colors.teal.shade900;
-
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orange.shade900
-                    : Colors.teal;
-
-LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
-    ? Style().gradasiPink2
-    : (theme == Style().gradasiBiru)
-        ? Style().gradasiBiru2
-        : (theme == Style().gradasiUngu)
-            ? Style().gradasiUngu2
-            : (theme == Style().gradasiOrange)
-                ? Style().gradasiOrange2
-                : Style().gradasi2;
 
 class ListDzikirPage extends StatefulWidget {
   final String dzikirVar;
@@ -155,8 +152,8 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
     bool kanan = false;
     bool kiri = false;
 
-    return BlocBuilder<ThemeBloc, LinearGradient>(
-      builder: (context, theme) {
+    return BlocBuilder<ColorBloc, Color>(
+      builder: (context, color) {
         return BlocBuilder<CountBloc, int>(
           builder: (context, count) {
             return Scaffold(
@@ -181,13 +178,13 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                           child: InkWell(
                               borderRadius: BorderRadius.circular(200),
                               splashColor: Colors.white,
-                              highlightColor: colorAccent(theme).withAlpha(10),
+                              highlightColor: _themeActive(color).withAlpha(10),
                               onTap: () {
                                 _moveDown();
                               },
                               child: Icon(
                                 Icons.arrow_forward_rounded,
-                                color: colorActive(theme),
+                                color: _themeActive(color),
                               )),
                         ),
                       ),
@@ -210,13 +207,13 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                           child: InkWell(
                               borderRadius: BorderRadius.circular(200),
                               splashColor: Colors.white,
-                              highlightColor: colorAccent(theme).withAlpha(10),
+                              highlightColor: _themeActive(color).withAlpha(10),
                               onTap: () {
                                 _moveUp();
                               },
                               child: Icon(
                                 Icons.arrow_back_rounded,
-                                color: colorActive(theme),
+                                color: _themeActive(color),
                               )),
                         ),
                       ),
@@ -243,12 +240,12 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: colorActive(theme),
+                                  color: _themeActive(color),
                                   width: 4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: colorActive(theme).withAlpha(100),
+                                    color: _themeActive(color).withAlpha(100),
                                     blurRadius: 6,
                                     offset: Offset(0, 6),
                                   ),
@@ -268,7 +265,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                       fontFamily: 'Poppins',
                                       fontSize: 26,
                                       fontWeight: FontWeight.bold,
-                                      color: colorAccent(theme)),
+                                      color: _themeActive(color)),
                                 ),
                               ),
                             ),
@@ -281,7 +278,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                     height: 60,
                                     width: 60,
                                     decoration: BoxDecoration(
-                                        gradient: theme,
+                                        gradient: _theme(color),
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                             color: Colors.white, width: 4)),
@@ -291,9 +288,9 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                       child: InkWell(
                                           borderRadius:
                                               BorderRadius.circular(200),
-                                          splashColor: colorActive(theme),
+                                          splashColor: _themeActive(color),
                                           highlightColor:
-                                              colorAccent(theme).withAlpha(10),
+                                              _themeActive(color).withAlpha(10),
                                           onTap: () {
                                             countBloc.add(0);
                                           },
@@ -311,7 +308,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                     height: 60,
                                     width: 60,
                                     decoration: BoxDecoration(
-                                        gradient: theme,
+                                        gradient: _theme(color),
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                             color: Colors.white, width: 4)),
@@ -321,9 +318,9 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                       child: InkWell(
                                           borderRadius:
                                               BorderRadius.circular(200),
-                                          splashColor: colorActive(theme),
+                                          splashColor: _themeActive(color),
                                           highlightColor:
-                                              colorAccent(theme).withAlpha(10),
+                                              _themeActive(color).withAlpha(10),
                                           onTap: () {
                                             //! ANCHOR tombol
                                             (count <= 99)
@@ -344,15 +341,15 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
               ),
               appBar: AppBar(
                 leading: InkWell(
-                  child: BlocBuilder<ThemeBloc, LinearGradient>(
-                    builder: (context, theme) {
+                  child: BlocBuilder<ColorBloc, Color>(
+                    builder: (context, Color) {
                       return Container(
                         margin: EdgeInsets.all(11),
                         decoration: BoxDecoration(
-                          gradient: bg(theme),
+                          gradient: _theme(color),
                           boxShadow: [
                             BoxShadow(
-                                color: colorActive(theme).withAlpha(100),
+                                color: _themeActive(color).withAlpha(100),
                                 offset: Offset(1, 2),
                                 blurRadius: 3)
                           ],
@@ -447,100 +444,105 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
 
   _itemList(index) {
     Dzikir dzikir = _tambahWaktu()[index];
-    return BlocBuilder<ThemeBloc, LinearGradient>(
-      builder: (context, theme) {
-        return Container(
-          margin: EdgeInsets.symmetric(horizontal: 24),
-          padding: EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Center(
-                  child: SizedBox(
-                    width: context.widthPct(.88),
-                    child: GradientText(
-                      dzikir.judul!,
-                      gradient: theme,
-                      style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700),
+    return BlocBuilder<ColorBloc, Color>(
+      builder: (context, color) {
+        return Expanded(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Center(
+                    child: SizedBox(
+                      width: context.widthPct(.88),
+                      child: GradientText(
+                        dzikir.judul!,
+                        gradient: _theme(color),
+                        style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  width: context.widthPct(.88),
+                  child: Center(
+                    child: Text(
+                      "Dibaca ${dzikir.dibaca}",
+                      style: Style(styleColor: Colors.grey.shade600).body,
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 30,
-                width: context.widthPct(.88),
-                child: Center(
-                  child: Text(
-                    "Dibaca ${dzikir.dibaca}",
-                    style: Style(styleColor: Colors.grey.shade600).body,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: context.widthPct(.88),
-                child: Card(
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, right: 16, top: 8),
-                              child: Text(
-                                dzikir.lafaz!,
-                                style:
-                                    TextStyle(fontSize: 32, fontFamily: "Sil"),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          DetailDzikirPage(
-                                            dzikir: dzikir,
-                                          )),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GradientText(
-                                  "Baca selengkapnya",
-                                  gradient: theme,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: "Poppins",
-                                      decoration: TextDecoration.underline),
+                SizedBox(
+                  width: context.widthPct(.88),
+                  child: Card(
+                    semanticContainer: true,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16, top: 8),
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    dzikir.lafaz!,
+                                    style: TextStyle(
+                                        fontSize: 28, fontFamily: "Sil"),
+                                    textAlign: TextAlign.right,
+                                  ),
                                 ),
                               ),
-                            )
-                          ],
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            DetailDzikirPage(
+                                              dzikir: dzikir,
+                                            )),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GradientText(
+                                    "Baca selengkapnya",
+                                    gradient: _theme(color),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: "Poppins",
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

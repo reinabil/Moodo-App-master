@@ -3,48 +3,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:moodo/bloc/colorBloc.dart';
-import 'package:moodo/bloc/themeBloc.dart';
 import 'package:moodo/model/style.dart';
 import 'package:moodo/view/favPage.dart';
 import 'package:moodo/view/homePage.dart';
 import 'package:moodo/view/listDoaPage.dart';
 import 'package:moodo/view/pagiPetang.dart';
 
-Color colorSolid(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.red
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blue
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purple
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.yellow
-                    : Colors.teal;
+Color _themeSolid(Color color) => (color == Colors.pink)
+    ? Colors.red
+    : (color == Colors.blue)
+        ? Colors.blue
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.yellow
+                : Colors.teal;
 
-Color colorAccent(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.tealAccent;
+Color _themeActive(Color color) => (color == Colors.pink)
+    ? Colors.redAccent
+    : (color == Colors.blue)
+        ? Colors.blueAccent
+        : (color == Colors.purple)
+            ? Colors.purple
+            : (color == Colors.orange)
+                ? Colors.orange.shade900
+                : Colors.teal;
 
-Color colorActive(LinearGradient theme) =>
-    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
-        ? Colors.redAccent
-        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
-            ? Colors.blueAccent
-            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
-                ? Colors.purpleAccent
-                : (theme == Style().gradasiOrange ||
-                        theme == Style().gradasiOrange2)
-                    ? Colors.orangeAccent
-                    : Colors.teal;
+LinearGradient _theme(Color color) => (color == Colors.pink)
+    ? Style().gradasiPink
+    : (color == Colors.blue)
+        ? Style().gradasiBiru
+        : (color == Colors.purple)
+            ? Style().gradasiUngu
+            : (color == Colors.orange)
+                ? Style().gradasiOrange
+                : Style().gradasi;
 
 class MainPage extends StatefulWidget {
   LinearGradient themeData;
@@ -78,8 +71,8 @@ class _MainPageState extends State<MainPage> {
           // Define the default brightness and colors.
           primaryColor: Colors.white,
           accentColor: Colors.white),
-      home: BlocBuilder<ThemeBloc, LinearGradient>(
-        builder: (context, theme) {
+      home: BlocBuilder<ColorBloc, Color>(
+        builder: (context, color) {
           return Scaffold(
             resizeToAvoidBottomInset: false,
             body: DoubleBackToCloseApp(
@@ -87,7 +80,7 @@ class _MainPageState extends State<MainPage> {
                 content: Text(
                   "Tap back again to exit",
                   style: TextStyle(
-                    color: colorSolid(theme),
+                    color: _themeSolid(color),
                     fontFamily: "Poppins",
                     fontSize: 14,
                   ),
@@ -117,8 +110,8 @@ class _MainPageState extends State<MainPage> {
                     itemBuilder: (context, position) {
                       return pages[position];
                     }),
-                bottomNavigationBar: BlocBuilder<ThemeBloc, LinearGradient>(
-                  builder: (context, theme) {
+                bottomNavigationBar: BlocBuilder<ColorBloc, Color>(
+                  builder: (context, color) {
                     return AnimatedContainer(
                       duration: Duration(milliseconds: 500),
                       curve: Curves.ease,
@@ -126,7 +119,7 @@ class _MainPageState extends State<MainPage> {
                       margin: EdgeInsets.only(bottom: 24, right: 8, left: 8),
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.white),
-                          gradient: theme,
+                          gradient: _theme(color),
                           borderRadius: BorderRadius.circular(64),
                           boxShadow: [
                             BoxShadow(
@@ -137,10 +130,10 @@ class _MainPageState extends State<MainPage> {
                       child: SafeArea(
                           child: GNav(
                               // curve: Curves.fastOutSlowIn,
-                              rippleColor: colorAccent(theme),
-                              hoverColor: colorAccent(theme),
+                              rippleColor: _themeActive(color),
+                              hoverColor: _themeActive(color),
                               gap: 0,
-                              activeColor: colorActive(theme),
+                              activeColor: _themeActive(color),
                               iconSize: 24,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 12),
@@ -152,7 +145,7 @@ class _MainPageState extends State<MainPage> {
                                     iconColor: Colors.white,
                                     text: ' Home',
                                     textStyle: TextStyle(
-                                      color: colorActive(theme),
+                                      color: _themeActive(color),
                                       fontFamily: "Poppins",
                                       fontSize: 14,
                                     )),
@@ -161,7 +154,7 @@ class _MainPageState extends State<MainPage> {
                                   iconColor: Colors.white,
                                   text: ' Cari doa',
                                   textStyle: TextStyle(
-                                    color: colorActive(theme),
+                                    color: _themeActive(color),
                                     fontFamily: "Poppins",
                                     fontSize: 14,
                                   ),
@@ -171,7 +164,7 @@ class _MainPageState extends State<MainPage> {
                                   iconColor: Colors.white,
                                   text: ' Pagi - Petang',
                                   textStyle: TextStyle(
-                                    color: colorActive(theme),
+                                    color: _themeActive(color),
                                     fontFamily: "Poppins",
                                     fontSize: 14,
                                   ),
@@ -181,7 +174,7 @@ class _MainPageState extends State<MainPage> {
                                   iconColor: Colors.white,
                                   text: ' Favorite',
                                   textStyle: TextStyle(
-                                    color: colorActive(theme),
+                                    color: _themeActive(color),
                                     fontFamily: "Poppins",
                                     fontSize: 14,
                                   ),
