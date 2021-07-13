@@ -112,18 +112,21 @@ class FavPage extends ConsumerWidget {
                           Expanded(
                             child: Center(
                                 child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                   Container(
                                       transform: Matrix4.translationValues(
-                                          0.0, 50.0, 0.0),
+                                          0.0, 00.0, 0.0),
                                       child: Lottie.asset(
                                           "assets/animation/empty.json")),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
                                   Container(
                                       margin:
                                           EdgeInsets.symmetric(horizontal: 64),
                                       child: Text(
-                                        "Yuk cari doa dulu dan masukkan doanya ke daftar doa favoritmu",
+                                        "Yah, doa favoritmu masih kosong.\nYuk baca doa dulu biar gak tersesat di dunia yang penuh tipu daya :)",
                                         style: Style(
                                                 styleColor:
                                                     Colors.grey.shade600)

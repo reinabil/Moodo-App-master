@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,6 @@ import 'package:lottie/lottie.dart';
 import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/bloc/themeBloc.dart';
 import 'package:moodo/model/doa.dart';
-import 'package:moodo/view/moodoWeb.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sized_context/sized_context.dart';
@@ -17,6 +17,7 @@ import 'package:moodo/model/style.dart';
 import 'moodPage.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:moodo/model/BilButton.dart';
+import 'package:snapping_sheet/snapping_sheet.dart';
 
 Color colorSolid(LinearGradient theme) =>
     (theme == Style().gradasiPink || theme == Style().gradasiPink2)
@@ -60,6 +61,717 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    ThemeBloc bloc = BlocProvider.of<ThemeBloc>(context);
+    final ScrollController listViewController = new ScrollController();
+    return SnappingSheet(
+      child: Background(),
+      lockOverflowDrag: true,
+      snappingPositions: [
+        SnappingPosition.factor(
+          positionFactor: 0.1,
+          snappingCurve: Curves.easeOutExpo,
+          snappingDuration: Duration(seconds: 1),
+          grabbingContentOffset: GrabbingContentOffset.top,
+        ),
+        SnappingPosition.factor(
+          positionFactor: 0.15,
+          snappingCurve: Curves.easeOutExpo,
+          snappingDuration: Duration(seconds: 1),
+          grabbingContentOffset: GrabbingContentOffset.top,
+        ),
+        SnappingPosition.factor(
+          snappingCurve: Curves.elasticOut,
+          snappingDuration: Duration(milliseconds: 1750),
+          positionFactor: 0.7,
+        ),
+      ],
+      grabbing: Container(
+        child: BlocBuilder<ThemeBloc, LinearGradient>(
+          builder: (context, theme) {
+            return GrabbingWidget(
+              theme: theme,
+            );
+          },
+        ),
+      ),
+      grabbingHeight: 100,
+      sheetAbove: null,
+      sheetBelow: SnappingSheetContent(
+        draggable: true,
+        childScrollController: listViewController,
+        child: Container(
+          color: Colors.white,
+          child: _sheet(listViewController, bloc),
+        ),
+      ),
+    );
+  }
+}
+
+// Align(
+//   alignment: Alignment.topLeft,
+//   child: Text(
+//     "Pilih tema warna",
+//     style: Style().headline,
+//     textAlign: TextAlign.left,
+//   ),
+// ),
+// ANCHOR Button tema
+// Container(
+//   margin: EdgeInsets.symmetric(vertical: 0),
+//   child: Wrap(
+//     spacing: 16,
+//     children: [
+//       GestureDetector(
+//         onTap: () {},
+//         child: Material(
+//           borderRadius: BorderRadius.circular(100),
+//           elevation: 10,
+//           shadowColor: Colors.teal,
+//           child: Stack(
+//             children: <Widget>[
+//               SizedBox(
+//                 width: context.widthPct(.14),
+//                 height: context.widthPct(.14),
+//                 child: Material(
+//                     borderRadius:
+//                         BorderRadius.circular(100),
+//                     color: Colors.transparent),
+//               ),
+//               Container(
+//                 width: context.widthPct(.14),
+//                 height: context.widthPct(.14),
+//                 decoration: BoxDecoration(
+//                     gradient: Style().gradasi,
+//                     borderRadius:
+//                         BorderRadius.circular(100)),
+//               )
+//             ],
+//           ),
+//         ),
+//       )
+//     ],
+//   ),
+// ),
+
+class GrabbingWidget extends StatelessWidget {
+  LinearGradient theme;
+  GrabbingWidget({required this.theme});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(blurRadius: 25, color: colorActive(theme).withAlpha(100)),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 20, bottom: 10),
+            width: 80,
+            height: 7,
+            decoration: BoxDecoration(
+              gradient: theme,
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(bottom: 10.0, top: 10),
+            child: Align(
+              alignment: Alignment.center,
+              child: GradientText(
+                "Hai, gimana kabarmu?",
+                textAlign: TextAlign.center,
+                style: Style(styleColor: Colors.black).title2,
+                gradient: theme,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+_sheet(ScrollController s, ThemeBloc bloc) {
+  return BlocBuilder<ThemeBloc, LinearGradient>(
+    builder: (context, theme) {
+      return ListView(
+        padding: EdgeInsets.all(0),
+        controller: s,
+        children: <Widget>[
+          Card(
+            semanticContainer: true,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 4,
+            shadowColor: colorActive(theme).withAlpha(100),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "اَلَا بِذِکۡرِ اللّٰہِ تَطۡمَئِنُّ الۡقُلُوۡبُ",
+                    style: TextStyle(fontSize: 32, fontFamily: "Sil"),
+                  ),
+                  Text(
+                    "Alaa bidzikrillahi tathma-innul quluub(u);",
+                    style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                        color: colorActive(theme)),
+                    textAlign: TextAlign.left,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.(QS. Ar Ra’d: 28)",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 14,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Container(
+            transform: Matrix4.translationValues(0.0, -20.0, 0.0),
+            child: Wrap(
+              spacing: 24,
+              alignment: WrapAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => MoodPage(
+                                moodo: "Sedih",
+                              )),
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                          width: context.widthPct(.25),
+                          height: context.heightPct(.25),
+                          child: Lottie.asset("assets/animation/sad.json")),
+                      Container(
+                        transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+                        child: Text("Sedih",
+                            style:
+                                Style(styleColor: Colors.grey.shade600).body),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => MoodPage(
+                                moodo: "Biasa aja",
+                              )),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                          width: context.widthPct(.25),
+                          height: context.heightPct(.25),
+                          child: Lottie.asset("assets/animation/netral.json")),
+                      Container(
+                        transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+                        child: Text("Biasa aja",
+                            style:
+                                Style(styleColor: Colors.grey.shade600).body),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => MoodPage(
+                                moodo: "Senang",
+                              )),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                          width: context.widthPct(.25),
+                          height: context.heightPct(.25),
+                          child: Lottie.asset("assets/animation/happy.json")),
+                      Container(
+                        transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+                        child: Text("Senang",
+                            style:
+                                Style(styleColor: Colors.grey.shade600).body),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          GradientText(
+            "Apa warna kesukaanmu?",
+            textAlign: TextAlign.center,
+            style: Style(styleColor: Colors.black).title2,
+            gradient: theme,
+          ),
+          Container(
+              width: context.widthPct(.5),
+              height: context.heightPct(.6),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  AnimatedContainer(
+                    width: context.widthPct(.7),
+                    height: context.heightPct(.2),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorActive(theme).withAlpha(100),
+                          blurRadius: 21,
+                          offset: Offset(0, 10),
+                        ),
+                      ],
+                      gradient: theme,
+                    ),
+                    duration: Duration(milliseconds: 700),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        // ! ijo
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              bloc.add(ThemeEvent.green);
+                            },
+                            child: AnimatedContainer(
+                              curve: Curves.bounceOut,
+                              duration: Duration(milliseconds: 700),
+                              width: (theme == Style().gradasi) ? 70 : 55,
+                              height: (theme == Style().gradasi) ? 70 : 55,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius:
+                                        (theme == Style().gradasi) ? 10 : 23,
+                                    offset: (theme == Style().gradasi)
+                                        ? Offset(0, 10)
+                                        : Offset(0, 6),
+                                  ),
+                                ],
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerRight,
+                                  end: Alignment.centerLeft,
+                                  colors: [
+                                    Color(0xff65db9f),
+                                    Color(0xff3da0a6)
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // ! biru
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              bloc.add(ThemeEvent.blue);
+                            },
+                            child: AnimatedContainer(
+                              curve: Curves.bounceOut,
+                              duration: Duration(milliseconds: 700),
+                              width: (theme == Style().gradasiBiru) ? 70 : 55,
+                              height: (theme == Style().gradasiBiru) ? 70 : 55,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius: (theme == Style().gradasiBiru)
+                                        ? 10
+                                        : 23,
+                                    offset: (theme == Style().gradasiBiru)
+                                        ? Offset(0, 10)
+                                        : Offset(0, 6),
+                                  ),
+                                ],
+                                gradient: Style().gradasiBiru,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // ! ungu
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              bloc.add(ThemeEvent.purple);
+                            },
+                            child: AnimatedContainer(
+                              curve: Curves.bounceOut,
+                              duration: Duration(milliseconds: 700),
+                              width: (theme == Style().gradasiUngu) ? 70 : 55,
+                              height: (theme == Style().gradasiUngu) ? 70 : 55,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius: (theme == Style().gradasiUngu)
+                                        ? 10
+                                        : 23,
+                                    offset: (theme == Style().gradasiUngu)
+                                        ? Offset(0, 10)
+                                        : Offset(0, 6),
+                                  ),
+                                ],
+                                gradient: Style().gradasiUngu,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // ! oren
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              bloc.add(ThemeEvent.orange);
+                            },
+                            child: AnimatedContainer(
+                              curve: Curves.bounceOut,
+                              duration: Duration(milliseconds: 700),
+                              width: (theme == Style().gradasiOrange) ? 70 : 55,
+                              height:
+                                  (theme == Style().gradasiOrange) ? 70 : 55,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius: (theme == Style().gradasiOrange)
+                                        ? 10
+                                        : 23,
+                                    offset: (theme == Style().gradasiOrange)
+                                        ? Offset(0, 10)
+                                        : Offset(0, 6),
+                                  ),
+                                ],
+                                gradient: Style().gradasiOrange,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // ! merah
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              bloc.add(ThemeEvent.pink);
+                            },
+                            child: AnimatedContainer(
+                              curve: Curves.bounceOut,
+                              duration: Duration(milliseconds: 700),
+                              width: (theme == Style().gradasiPink) ? 70 : 55,
+                              height: (theme == Style().gradasiPink) ? 70 : 55,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius: (theme == Style().gradasiPink)
+                                        ? 10
+                                        : 23,
+                                    offset: (theme == Style().gradasiPink)
+                                        ? Offset(0, 10)
+                                        : Offset(0, 6),
+                                  ),
+                                ],
+                                gradient: Style().gradasiPink,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _wah(theme)),
+                  // ! motivasi
+                  AnimatedContainer(
+                    width: context.widthPct(.7),
+                    height: context.heightPct(.08),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2000),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorActive(theme).withAlpha(100),
+                          blurRadius: 21,
+                          offset: Offset(0, 10),
+                        ),
+                      ],
+                      gradient: theme,
+                    ),
+                    duration: Duration(milliseconds: 500),
+                    child: psikologiWarna(theme),
+                  )
+                ],
+              )),
+        ],
+      );
+    },
+  );
+}
+
+_wah(LinearGradient theme) {
+  String warna = (theme == Style().gradasiPink)
+      ? "merah"
+      : (theme == Style().gradasiBiru)
+          ? "biru"
+          : (theme == Style().gradasiUngu)
+              ? "ungu"
+              : (theme == Style().gradasiOrange)
+                  ? "oren"
+                  : "hijau";
+
+  return Text(
+    "Orang yang suka warna $warna itu",
+    style: TextStyle(fontFamily: 'Poppins', color: Colors.grey),
+  );
+}
+
+psikologiWarna(LinearGradient theme) {
+  // ! ijo
+  if (theme == gradasi) {
+    return Center(
+        child: AnimatedTextKit(
+      repeatForever: true,
+      animatedTexts: [
+        RotateAnimatedText(
+          "Setia",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Penyayang",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Gampang bergaul",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ));
+  }
+  // ! biru
+  else if (theme == Style().gradasiBiru) {
+    return Center(
+        child: AnimatedTextKit(
+      repeatForever: true,
+      animatedTexts: [
+        RotateAnimatedText(
+          "Tegar",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Lembut",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Penyabar",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ));
+  }
+  // ! ungu
+  else if (theme == Style().gradasiUngu) {
+    return Center(
+        child: AnimatedTextKit(
+      repeatForever: true,
+      animatedTexts: [
+        RotateAnimatedText(
+          "Kreatif",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Mandiri",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Bijak",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ));
+  }
+  // ! oren
+  else if (theme == Style().gradasiOrange) {
+    return Center(
+        child: AnimatedTextKit(
+      repeatForever: true,
+      animatedTexts: [
+        RotateAnimatedText(
+          "Optimistis",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Bisa dipercaya",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Pantang menyerah",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ));
+  }
+  // ! pink
+  else if (theme == Style().gradasiPink) {
+    return Center(
+        child: AnimatedTextKit(
+      repeatForever: true,
+      animatedTexts: [
+        RotateAnimatedText(
+          "Bikin orang nyaman",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Suka kedamaian",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        RotateAnimatedText(
+          "Punya mimpi tinggi",
+          textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ));
+  }
+}
+
+class Background extends StatelessWidget {
   bool isPressed = false;
   var now = new DateTime.now();
   var waktu = Waktu();
@@ -75,26 +787,15 @@ class _HomePageState extends State<HomePage> {
     _isInit = false;
   }
 
-  void saveData(String theme) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('theme', theme);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final ScrollController listViewController = new ScrollController();
     ThemeBloc bloc = BlocProvider.of<ThemeBloc>(context);
-
-    return BlocBuilder<ThemeBloc, LinearGradient>(
-        // ! theme == tema aplikasi
-        builder: (context, theme) {
-      return MaterialApp(
-        theme: ThemeData(
-          // Define the default brightness and colors.
-          primaryColor: colorSolid(theme),
-          accentColor: colorAccent(theme),
-        ),
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
+    return Scaffold(
+      body: BlocBuilder<ThemeBloc, LinearGradient>(
+          // ! theme == tema aplikasi
+          builder: (context, theme) {
+        return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: <Widget>[
             AnimatedContainer(
@@ -102,7 +803,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                   // gradient: green,
                   gradient: theme),
-              duration: Duration(milliseconds: 500),
+              duration: Duration(milliseconds: 2000),
               curve: Curves.ease,
             ),
             ListView(
@@ -166,8 +867,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "${doa.lafaz}",
                                         style: TextStyle(
-                                            fontSize: 24,
-                                            fontFamily: "Poppins"),
+                                            fontSize: 32, fontFamily: "Sil"),
                                         textAlign: TextAlign.center,
                                       ),
                                       SizedBox(
@@ -211,199 +911,6 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-            DraggableScrollableSheet(
-                initialChildSize: 0.25,
-                maxChildSize: 0.67,
-                minChildSize: 0.25,
-                builder: (BuildContext c, s) {
-                  return BlocBuilder<ThemeBloc, LinearGradient>(
-                    builder: (context, theme) {
-                      return Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorActive(theme).withAlpha(100),
-                                blurRadius: 6.0,
-                                offset: Offset(0, -7),
-                              )
-                            ]),
-                        child: ListView(
-                          controller: s,
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                transform:
-                                    Matrix4.translationValues(0.0, -10.0, 0.0),
-                                width: context.widthPct(.15),
-                                height: context.heightPct(.007),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[500],
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8, top: 0),
-                              child: GradientText(
-                                "Hai, gimana kabarmu?",
-                                textAlign: TextAlign.center,
-                                style: Style(styleColor: Colors.black).title2,
-                                gradient: theme,
-                              ),
-                            ),
-                            Card(
-                              semanticContainer: true,
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                              elevation: 4,
-                              shadowColor: colorActive(theme).withAlpha(100),
-                              child: Container(
-                                padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      "اَلَا بِذِکۡرِ اللّٰہِ تَطۡمَئِنُّ الۡقُلُوۡبُ",
-                                      style: TextStyle(fontSize: 24),
-                                    ),
-                                    Text(
-                                      "Alaa bidzikrillahi tathma-innul quluub(u);",
-                                      style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic,
-                                          color: colorActive(theme)),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram.(QS. Ar Ra’d: 28)",
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              transform:
-                                  Matrix4.translationValues(0.0, -20.0, 0.0),
-                              child: Wrap(
-                                spacing: 24,
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                MoodPage(
-                                                  moodo: "Sedih",
-                                                )),
-                                      );
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            width: context.widthPct(.25),
-                                            height: context.heightPct(.25),
-                                            child: Lottie.asset(
-                                                "assets/animation/sad.json")),
-                                        Container(
-                                          transform: Matrix4.translationValues(
-                                              0.0, -30.0, 0.0),
-                                          child: Text("Sedih",
-                                              style: Style(
-                                                      styleColor:
-                                                          Colors.grey.shade600)
-                                                  .body),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                MoodPage(
-                                                  moodo: "Biasa aja",
-                                                )),
-                                      );
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: context.widthPct(.25),
-                                            height: context.heightPct(.25),
-                                            child: Lottie.asset(
-                                                "assets/animation/netral.json")),
-                                        Container(
-                                          transform: Matrix4.translationValues(
-                                              0.0, -30.0, 0.0),
-                                          child: Text("Biasa aja",
-                                              style: Style(
-                                                      styleColor:
-                                                          Colors.grey.shade600)
-                                                  .body),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                MoodPage(
-                                                  moodo: "Senang",
-                                                )),
-                                      );
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: context.widthPct(.25),
-                                            height: context.heightPct(.25),
-                                            child: Lottie.asset(
-                                                "assets/animation/happy.json")),
-                                        Container(
-                                          transform: Matrix4.translationValues(
-                                              0.0, -30.0, 0.0),
-                                          child: Text("Senang",
-                                              style: Style(
-                                                      styleColor:
-                                                          Colors.grey.shade600)
-                                                  .body),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 100,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }),
             // ANCHOR Tentang aplikasi
             SafeArea(
                 child: Row(
@@ -455,7 +962,7 @@ class _HomePageState extends State<HomePage> {
                                   Align(
                                     alignment: Alignment.topCenter,
                                     child: Text(
-                                      "Ilustrasi :\nhttps://lottiefiles.com/rizwanrasool\nhttps://lottiefiles.com/crestart\n",
+                                      "Ilustrasi :\nhttps://lottiefiles.com/51382-astronaut-light-theme\nhttps://lottiefiles.com/crestart\n",
                                       style: Style(
                                               styleColor: Colors.grey.shade600)
                                           .caption,
@@ -464,7 +971,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Center(
                                     child: Text(
-                                      "versi 1.0.0",
+                                      "versi 2.0.0",
                                       style: Style(
                                               styleColor: Colors.grey.shade600)
                                           .caption,
@@ -480,147 +987,11 @@ class _HomePageState extends State<HomePage> {
                           transitionType: DialogTransitionType.NONE);
                     }),
                 // ! tema aplikasi
-                BlocBuilder<ThemeBloc, LinearGradient>(
-                  builder: (context, color) {
-                    return IconButton(
-                        icon: Icon(
-                          Icons.settings,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          NAlertDialog(
-                            title: Text(
-                              "Pilih warna kesukaanmu :)",
-                              style: Style().headline,
-                            ),
-                            content: MediaQuery.removePadding(
-                              removeTop: true,
-                              removeBottom: true,
-                              context: context,
-                              child: Container(
-                                  width: context.widthPct(.5),
-                                  height: context.heightPct(.6),
-                                  child: ListView(
-                                    children: [
-                                      SizedBox(
-                                        height: 30,
-                                      ),
-                                      FlatButton(
-                                        onPressed: () {
-                                          bloc.add(ThemeEvent.green);
-                                        },
-                                        child: Container(
-                                          width: 200,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              gradient: Style().gradasi),
-                                        ),
-                                      ),
-                                      FlatButton(
-                                        onPressed: () {
-                                          bloc.add(ThemeEvent.blue);
-                                        },
-                                        child: Container(
-                                          width: 200,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              gradient: Style().gradasiBiru),
-                                        ),
-                                      ),
-                                      FlatButton(
-                                        onPressed: () {
-                                          bloc.add(ThemeEvent.purple);
-                                        },
-                                        child: Container(
-                                          width: 200,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              gradient: Style().gradasiUngu),
-                                        ),
-                                      ),
-                                      FlatButton(
-                                        onPressed: () {
-                                          bloc.add(ThemeEvent.orange);
-                                        },
-                                        child: Container(
-                                          width: 200,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              gradient: Style().gradasiOrange),
-                                        ),
-                                      ),
-                                      FlatButton(
-                                        onPressed: () {
-                                          bloc.add(ThemeEvent.pink);
-                                          saveData(theme.toString());
-                                        },
-                                        child: Container(
-                                          width: 200,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              gradient: Style().gradasiPink),
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                            blur: 0,
-                          ).show(context,
-                              transitionType: DialogTransitionType.NONE);
-                        });
-                  },
-                )
               ],
             ))
           ]),
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 }
-
-// Align(
-//   alignment: Alignment.topLeft,
-//   child: Text(
-//     "Pilih tema warna",
-//     style: Style().headline,
-//     textAlign: TextAlign.left,
-//   ),
-// ),
-// ANCHOR Button tema
-// Container(
-//   margin: EdgeInsets.symmetric(vertical: 0),
-//   child: Wrap(
-//     spacing: 16,
-//     children: [
-//       GestureDetector(
-//         onTap: () {},
-//         child: Material(
-//           borderRadius: BorderRadius.circular(100),
-//           elevation: 10,
-//           shadowColor: Colors.teal,
-//           child: Stack(
-//             children: <Widget>[
-//               SizedBox(
-//                 width: context.widthPct(.14),
-//                 height: context.widthPct(.14),
-//                 child: Material(
-//                     borderRadius:
-//                         BorderRadius.circular(100),
-//                     color: Colors.transparent),
-//               ),
-//               Container(
-//                 width: context.widthPct(.14),
-//                 height: context.widthPct(.14),
-//                 decoration: BoxDecoration(
-//                     gradient: Style().gradasi,
-//                     borderRadius:
-//                         BorderRadius.circular(100)),
-//               )
-//             ],
-//           ),
-//         ),
-//       )
-//     ],
-//   ),
-// ),

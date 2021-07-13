@@ -82,103 +82,114 @@ class _ListDoaPageState extends State<ListDoaPage> {
         resizeToAvoidBottomInset: false,
         body: BlocBuilder<ThemeBloc, LinearGradient>(
           builder: (context2, theme) {
-            return Stack(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: bg(theme),
-                  ),
-                ),
-                //heading
-                Container(
-                  margin:
-                      EdgeInsets.only(top: 60 + 60 + context.widthPct(.8) / 6),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(26),
-                      topRight: Radius.circular(26),
+            return GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: bg(theme),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorActive(theme).withAlpha(100),
-                        blurRadius: 6.0,
-                        offset: Offset(0, -7),
-                      )
-                    ],
-                    color: Colors.white,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.fromLTRB(40, 40, 16, 8),
-                        child: GradientText(
-                          "Daftar Doa",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                          gradient: bg(theme),
-                        ),
+                  //heading
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: 60 + 60 + context.widthPct(.8) / 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(26),
+                        topRight: Radius.circular(26),
                       ),
-                      //ANCHOR FutureBuilder
-                      Expanded(
-                        child: MediaQuery.removePadding(
-                          removeTop: true,
-                          context: context,
-                          child: CupertinoScrollbar(
-                            child: FutureBuilder(
-                                future: _isInit ? fetchDoa(context) : null,
-                                builder: (context, _) {
-                                  if (doaList != null) {
-                                    return ListView.builder(
-                                      itemCount: doaList!.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        Doa doa = doaList![index];
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorActive(theme).withAlpha(100),
+                          blurRadius: 6.0,
+                          offset: Offset(0, -7),
+                        )
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.fromLTRB(40, 40, 16, 8),
+                          child: GradientText(
+                            "Daftar Doa",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
+                            gradient: bg(theme),
+                          ),
+                        ),
+                        //ANCHOR FutureBuilder
+                        Expanded(
+                          child: MediaQuery.removePadding(
+                            removeTop: true,
+                            context: context,
+                            child: CupertinoScrollbar(
+                              child: FutureBuilder(
+                                  future: _isInit ? fetchDoa(context) : null,
+                                  builder: (context, _) {
+                                    if (doaList != null) {
+                                      return ListView.builder(
+                                        keyboardDismissBehavior:
+                                            ScrollViewKeyboardDismissBehavior
+                                                .onDrag,
+                                        itemCount: doaList!.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          Doa doa = doaList![index];
 
-                                        // Edit by Pathik Patel
-                                        String searchSrc = doaList![index]
-                                            .judul
-                                            .toString()
-                                            .toLowerCase();
-                                        String searchTgt =
-                                            searchTxt.text.toLowerCase();
-                                        // return _itemList(index);
-                                        // if search query is empty or
-                                        // current item text contains search query
-                                        if (searchTgt == "" ||
-                                            searchSrc.contains(searchTgt))
-                                          return _itemList(index);
-                                        // if not return empty container
-                                        else
-                                          return Container();
-                                      },
-                                    );
-                                  } else {
-                                    LinearProgressIndicator(
+                                          // Edit by Pathik Patel
+                                          String searchSrc = doaList![index]
+                                              .judul
+                                              .toString()
+                                              .toLowerCase();
+                                          String searchTgt =
+                                              searchTxt.text.toLowerCase();
+                                          // return _itemList(index);
+                                          // if search query is empty or
+                                          // current item text contains search query
+                                          if (searchTgt == "" ||
+                                              searchSrc.contains(searchTgt))
+                                            return _itemList(index);
+                                          // if not return empty container
+                                          else
+                                            return Container();
+                                        },
+                                      );
+                                    } else {
+                                      LinearProgressIndicator(
+                                        backgroundColor: Colors.white,
+                                        valueColor: AlwaysStoppedAnimation(
+                                            Colors.white),
+                                      );
+                                    }
+                                    return LinearProgressIndicator(
                                       backgroundColor: Colors.white,
                                       valueColor:
                                           AlwaysStoppedAnimation(Colors.white),
                                     );
-                                  }
-                                  return LinearProgressIndicator(
-                                    backgroundColor: Colors.white,
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Colors.white),
-                                  );
-                                }),
+                                  }),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                // ANCHOR Search Bar
-                _searchBar()
-              ],
+                  // ANCHOR Search Bar
+                  _searchBar()
+                ],
+              ),
             );
           },
         ),
@@ -232,8 +243,12 @@ class _ListDoaPageState extends State<ListDoaPage> {
               child: Container(
                 child: Theme(
                   data: new ThemeData(
-                    primaryColor: Colors.grey[200],
-                  ),
+                      primaryColor: Colors.grey[200],
+                      textSelectionTheme: TextSelectionThemeData(
+                        cursorColor: colorActive(theme).withAlpha(100),
+                        selectionColor: colorActive(theme).withAlpha(70),
+                        selectionHandleColor: colorActive(theme),
+                      )),
                   child: TextField(
                     // controller to get text
                     controller: searchTxt,
@@ -241,7 +256,7 @@ class _ListDoaPageState extends State<ListDoaPage> {
                       str = str.toLowerCase();
                       setState(() {});
                     },
-                    autofocus: true,
+                    autofocus: false,
                     style: TextStyle(
                         color: Colors.grey[700], fontFamily: "Poppins"),
                     cursorColor: Colors.white,

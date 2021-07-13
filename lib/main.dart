@@ -7,6 +7,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:moodo/bloc/colorBloc.dart';
 import 'package:moodo/bloc/favBloc.dart';
 import 'package:moodo/bloc/themeBloc.dart';
+import 'package:moodo/model/countBloc.dart';
 import 'package:moodo/model/style.dart';
 import 'package:moodo/view/mainPage.dart';
 import 'package:path_provider/path_provider.dart';
@@ -54,49 +55,45 @@ class _MoodoState extends State<Moodo> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<ThemeBloc>(
-          create: (BuildContext context) => ThemeBloc(Style().gradasi),
-        ),
-        BlocProvider<FavBloc>(
-          create: (BuildContext context) => FavBloc([]),
-        ),
-      ],
-      child: BlocBuilder<ThemeBloc, LinearGradient>(
-        builder: (context, themeData) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: "Moodo",
-            theme: ThemeData(
-                textSelectionTheme: TextSelectionThemeData(
-                  cursorColor: Colors.tealAccent,
-                  selectionColor: Colors.teal,
-                  selectionHandleColor: Colors.teal,
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: ButtonStyle(
-                      overlayColor: MaterialStateColor.resolveWith(
-                    (states) => Colors.tealAccent,
-                  )),
-                ),
-                primaryColor: Colors.teal,
-                accentColor: Colors.tealAccent,
-                hoverColor: Colors.tealAccent,
-                highlightColor: Colors.tealAccent),
-            home: SplashScreenView(
-              home: MainPage(),
-              duration: 2000,
-              imageSize: 100,
-              imageSrc: "images/logo.png",
-              text: "Du'a for your daily mood",
-              textType: TextType.ColorizeAnimationText,
-              textStyle: TextStyle(fontSize: 14, fontFamily: "Poppins"),
-              backgroundColor: Colors.white,
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Moodo',
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider<ThemeBloc>(
+              create: (BuildContext context) => ThemeBloc(Style().gradasi),
             ),
-          );
-        },
-      ),
-    );
+            BlocProvider<CountBloc>(
+                create: (BuildContext context) => CountBloc(0))
+          ],
+          child: BlocBuilder<ThemeBloc, LinearGradient>(
+            builder: (context, themeData) {
+              return MaterialApp(
+                // debugShowCheckedModeBanner: false,
+                // title: "Moodo",
+                // theme: ThemeData(
+                //     // Define the default brightness and colors.
+                //     primaryColor: colorSolid(theme),
+                //     accentColor: colorAccent(theme)),
+
+                debugShowCheckedModeBanner: false,
+                title: "Moodo",
+
+                home: SplashScreenView(
+                  home: MainPage(
+                    themeData: themeData,
+                  ),
+                  duration: 2000,
+                  imageSize: 100,
+                  imageSrc: "images/logo.png",
+                  text: "Du'a for your daily mood",
+                  textType: TextType.ColorizeAnimationText,
+                  textStyle: TextStyle(fontSize: 14, fontFamily: "Poppins"),
+                  backgroundColor: Colors.white,
+                ),
+              );
+            },
+          ),
+        ));
   }
 }

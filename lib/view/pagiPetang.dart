@@ -75,6 +75,7 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
     return BlocBuilder<ThemeBloc, LinearGradient>(
       builder: (context, theme) {
         return Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Stack(children: <Widget>[
             Container(
                 constraints: BoxConstraints.expand(),
@@ -120,7 +121,8 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                               ),
                               Text(
                                 "فَسُبْحَانَ اللَّهِ حِينَ تُمْسُونَ وَحِينَ تُصْبِحُونَ",
-                                style: TextStyle(fontSize: 24),
+                                style:
+                                    TextStyle(fontSize: 32, fontFamily: "Sil"),
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(
@@ -211,7 +213,7 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       ListDzikirPage(
-                                        dzikirVar: "petang",
+                                        dzikirVar: 'petang',
                                       )),
                             );
                           },

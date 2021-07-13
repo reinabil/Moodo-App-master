@@ -9,6 +9,52 @@ import 'package:recase/recase.dart';
 
 import 'detailDoaPage.dart';
 
+Color colorSolid(LinearGradient theme) =>
+    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
+        ? Colors.red
+        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
+            ? Colors.blue
+            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
+                ? Colors.purple
+                : (theme == Style().gradasiOrange ||
+                        theme == Style().gradasiOrange2)
+                    ? Colors.yellow
+                    : Colors.teal;
+
+Color colorAccent(LinearGradient theme) =>
+    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
+        ? Colors.redAccent
+        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
+            ? Colors.blueAccent
+            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
+                ? Colors.purpleAccent
+                : (theme == Style().gradasiOrange ||
+                        theme == Style().gradasiOrange2)
+                    ? Colors.orangeAccent
+                    : Colors.tealAccent;
+
+Color colorActive(LinearGradient theme) =>
+    (theme == Style().gradasiPink || theme == Style().gradasiPink2)
+        ? Colors.redAccent
+        : (theme == Style().gradasiBiru || theme == Style().gradasiBiru2)
+            ? Colors.blueAccent
+            : (theme == Style().gradasiUngu || theme == Style().gradasiUngu2)
+                ? Colors.purple
+                : (theme == Style().gradasiOrange ||
+                        theme == Style().gradasiOrange2)
+                    ? Colors.orange.shade900
+                    : Colors.teal;
+
+LinearGradient bg(LinearGradient theme) => (theme == Style().gradasiPink)
+    ? Style().gradasiPink
+    : (theme == Style().gradasiBiru)
+        ? Style().gradasiBiru2
+        : (theme == Style().gradasiUngu)
+            ? Style().gradasiUngu2
+            : (theme == Style().gradasiOrange)
+                ? Style().gradasiOrange2
+                : Style().gradasi2;
+
 class MoodPage extends StatefulWidget {
   final String moodo;
   MoodPage({
@@ -35,18 +81,18 @@ class _MoodPageState extends State<MoodPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, LinearGradient>(
-      builder: (context, theme) {
-        return Scaffold(
-          appBar: AppBar(
-            leading: InkWell(
-              child: Container(
+    return Scaffold(
+      appBar: AppBar(
+        leading: InkWell(
+          child: BlocBuilder<ThemeBloc, LinearGradient>(
+            builder: (context, theme) {
+              return Container(
                 margin: EdgeInsets.all(11),
                 decoration: BoxDecoration(
-                  gradient: Style().gradasi,
+                  gradient: theme,
                   boxShadow: [
                     BoxShadow(
-                        color: Color.fromARGB(255, 67, 169, 165),
+                        color: colorActive(theme).withAlpha(100),
                         offset: Offset(1, 2),
                         blurRadius: 3)
                   ],
@@ -56,22 +102,26 @@ class _MoodPageState extends State<MoodPage> {
                   Icons.arrow_back_ios_rounded,
                   color: Colors.white,
                 ),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            title: Text(
-              "Doa",
-              style: TextStyle(
-                fontFamily: "Poppins",
-                color: Colors.black,
-              ),
-            ),
+              );
+            },
           ),
-          body: Stack(
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Text(
+          "Doa",
+          style: TextStyle(
+            fontFamily: "Poppins",
+            color: Colors.black,
+          ),
+        ),
+      ),
+      body: BlocBuilder<ThemeBloc, LinearGradient>(
+        builder: (context, theme) {
+          return Stack(
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(
@@ -82,13 +132,13 @@ class _MoodPageState extends State<MoodPage> {
                   child: Column(
                     children: [
                       Text(
-                        "Doa yang pas untuk kamu yang lagi",
+                        "Doa yang pas buat kamu yang lagi",
                         style: Style(styleColor: Colors.grey.shade600).body,
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        "",
-                        style: Style(styleColor: Colors.teal).title1,
+                        moodo,
+                        style: Style(styleColor: colorActive(theme)).title1,
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -111,7 +161,7 @@ class _MoodPageState extends State<MoodPage> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Color.fromARGB(150, 66, 167, 166),
+                            color: colorActive(theme).withAlpha(100),
                             blurRadius: 6.0,
                             offset: Offset(0, -7),
                           )
@@ -164,9 +214,9 @@ class _MoodPageState extends State<MoodPage> {
                     );
                   }),
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -181,11 +231,11 @@ class _MoodPageState extends State<MoodPage> {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            gradient: Style().gradasi,
+            gradient: theme,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                  color: Colors.teal.withOpacity(0.5),
+                  color: colorActive(theme).withAlpha(100),
                   blurRadius: 3,
                   offset: Offset(2, 5)),
             ]),

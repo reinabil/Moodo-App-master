@@ -104,13 +104,13 @@ class Style {
   final LinearGradient gradasiOrange = LinearGradient(
     begin: Alignment.centerRight,
     end: Alignment.centerLeft,
-    colors: [Color(0xffffc1a1), Color(0xffffa49d)],
+    colors: [Color(0xffFFAD83), Color(0xffFF8D84)],
   );
 
   /// Gradasi Orange terbalik
   final LinearGradient gradasiOrange2 = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [Color(0xffffc1a1), Color(0xffffa49d)],
+    colors: [Color(0xffFFAD83), Color(0xffFF8D84)],
   );
 }
