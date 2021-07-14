@@ -90,10 +90,11 @@ class _MainPageState extends State<MainPage> {
                 content: Text(
                   "Tap back again to exit",
                   style: TextStyle(
-                    color: _themeSolid(color),
+                    color: _themeActive(color),
                     fontFamily: "Poppins",
                     fontSize: 14,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 behavior: SnackBarBehavior.floating,
                 duration: Duration(seconds: 1),

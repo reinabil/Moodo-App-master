@@ -170,7 +170,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                           shape: BoxShape.circle,
                         ),
                         child: Material(
-                          color: Colors.transparent,
+                          color: Colors.white.withOpacity(0.8),
                           borderRadius: BorderRadius.circular(1000),
                           child: InkWell(
                               borderRadius: BorderRadius.circular(200),
@@ -180,7 +180,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                 _moveDown();
                               },
                               child: Icon(
-                                Icons.arrow_forward_rounded,
+                                Icons.arrow_downward_rounded,
                                 color: _themeActive(color),
                               )),
                         ),
@@ -199,7 +199,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                           shape: BoxShape.circle,
                         ),
                         child: Material(
-                          color: Colors.transparent,
+                          color: Colors.white.withOpacity(0.8),
                           borderRadius: BorderRadius.circular(1000),
                           child: InkWell(
                               borderRadius: BorderRadius.circular(200),
@@ -209,7 +209,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                 _moveUp();
                               },
                               child: Icon(
-                                Icons.arrow_back_rounded,
+                                Icons.arrow_upward_rounded,
                                 color: _themeActive(color),
                               )),
                         ),
@@ -220,10 +220,10 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                     alignment: Alignment.bottomCenter,
                     child: AnimatedContainer(
                       width: (message == "Scroll Update")
-                          ? context.widthPct(.39)
+                          ? context.widthPct(.37)
                           : context.widthPct(.42),
                       height: (message == "Scroll Update")
-                          ? context.heightPct(.10)
+                          ? context.heightPct(.08)
                           : context.heightPct(.13),
                       duration: Duration(milliseconds: 500),
                       curve: Curves.ease,
@@ -271,14 +271,18 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                               left: 0,
                               child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
+                                  child: AnimatedContainer(
+                                    curve: Curves.ease,
+                                    width:
+                                        (message == "Scroll Update") ? 50 : 60,
+                                    height:
+                                        (message == "Scroll Update") ? 50 : 60,
                                     decoration: BoxDecoration(
                                         gradient: _theme(color),
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                             color: Colors.white, width: 4)),
+                                    duration: Duration(milliseconds: 500),
                                     child: Material(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(1000),
@@ -301,14 +305,18 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                               right: 0,
                               child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
+                                  child: AnimatedContainer(
+                                    curve: Curves.ease,
+                                    width:
+                                        (message == "Scroll Update") ? 50 : 60,
+                                    height:
+                                        (message == "Scroll Update") ? 50 : 60,
                                     decoration: BoxDecoration(
                                         gradient: _theme(color),
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                             color: Colors.white, width: 4)),
+                                    duration: Duration(milliseconds: 500),
                                     child: Material(
                                       color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(1000),
@@ -338,6 +346,9 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
               ),
               appBar: AppBar(
                 leading: InkWell(
+                  borderRadius: BorderRadius.circular(200),
+                  splashColor: _themeActive(color).withAlpha(10),
+                  highlightColor: _themeActive(color).withAlpha(10),
                   child: BlocBuilder<ColorBloc, Color>(
                     builder: (context, Color) {
                       return Container(
@@ -407,19 +418,24 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                     },
                                     // ANCHOR LIST VIEW
 
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        controller: _controller,
-                                        itemCount: _tambahWaktu().length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          Dzikir dzikir = _tambahWaktu()[index];
-                                          if (dzikir.waktu.toString() ==
-                                              dzikirVar.toLowerCase())
-                                            return _itemList(index);
-                                          else
-                                            return Container();
-                                        }),
+                                    child: Scrollbar(
+                                      isAlwaysShown: true,
+                                      controller: _controller,
+                                      child: ListView.builder(
+                                          padding: EdgeInsets.only(bottom: 80),
+                                          controller: _controller,
+                                          itemCount: _tambahWaktu().length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            Dzikir dzikir =
+                                                _tambahWaktu()[index];
+                                            if (dzikir.waktu.toString() ==
+                                                dzikirVar.toLowerCase())
+                                              return _itemList(index);
+                                            else
+                                              return Container();
+                                          }),
+                                    ),
                                   );
                                 } else
                                   return Container();
@@ -486,7 +502,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                 child: Card(
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                   child: Column(
@@ -503,7 +519,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                 child: Text(
                                   dzikir.lafaz!,
                                   style: TextStyle(
-                                      fontSize: 28, fontFamily: "Sil"),
+                                      fontSize: 32, fontFamily: "Sil"),
                                   textAlign: TextAlign.right,
                                 ),
                               ),

@@ -75,142 +75,152 @@ class _MoodPageState extends State<MoodPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: InkWell(
-          child: BlocBuilder<ColorBloc, Color>(
+    return BlocBuilder<ColorBloc, Color>(
+      builder: (context, color) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: InkWell(
+              borderRadius: BorderRadius.circular(200),
+              splashColor: _themeActive(color).withAlpha(10),
+              highlightColor: _themeActive(color).withAlpha(10),
+              child: BlocBuilder<ColorBloc, Color>(
+                builder: (context, color) {
+                  return Container(
+                    margin: EdgeInsets.all(11),
+                    decoration: BoxDecoration(
+                      gradient: _theme(color),
+                      boxShadow: [
+                        BoxShadow(
+                            color: _themeActive(color).withAlpha(100),
+                            offset: Offset(1, 2),
+                            blurRadius: 3)
+                      ],
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_rounded,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            title: Text(
+              "Doa",
+              style: TextStyle(
+                fontFamily: "Poppins",
+                color: Colors.black,
+              ),
+            ),
+          ),
+          body: BlocBuilder<ColorBloc, Color>(
             builder: (context, color) {
-              return Container(
-                margin: EdgeInsets.all(11),
-                decoration: BoxDecoration(
-                  gradient: _theme(color),
-                  boxShadow: [
-                    BoxShadow(
-                        color: _themeActive(color).withAlpha(100),
-                        offset: Offset(1, 2),
-                        blurRadius: 3)
-                  ],
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_rounded,
-                  color: Colors.white,
-                ),
+              return Stack(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: (context.widthPct(.7) / 7), left: 40, right: 40),
+                    width: context.widthPct(.8),
+                    height: context.widthPct(.8),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Doa yang pas buat kamu yang lagi",
+                            style: Style(styleColor: Colors.grey.shade600).body,
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            moodo,
+                            style:
+                                Style(styleColor: _themeActive(color)).title1,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //heading
+                  DraggableScrollableSheet(
+                      initialChildSize: 0.8,
+                      maxChildSize: 1,
+                      minChildSize: 0.8,
+                      builder: (BuildContext c, s) {
+                        return Container(
+                          padding: EdgeInsets.only(top: 0),
+                          margin: EdgeInsets.only(top: 0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(26),
+                              topRight: Radius.circular(26),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: _themeActive(color).withAlpha(100),
+                                blurRadius: 6.0,
+                                offset: Offset(0, -7),
+                              )
+                            ],
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 32,
+                              ),
+                              //ANCHOR FutureBuilder
+                              Expanded(
+                                child: FutureBuilder(
+                                    future: _isInit ? fetchDoa(context) : null,
+                                    builder: (context, _) {
+                                      if (doaList != null) {
+                                        return ListView.builder(
+                                          controller: s,
+                                          itemCount: doaList!.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            Doa doa = doaList![index];
+
+                                            if (doa.mood
+                                                    .toString()
+                                                    .toLowerCase() ==
+                                                moodo.toLowerCase())
+                                              return _itemList(index, color);
+                                            // if not return empty container
+                                            else
+                                              return Container();
+                                          },
+                                        );
+                                      } else {
+                                        LinearProgressIndicator(
+                                          backgroundColor: Colors.white,
+                                          valueColor: AlwaysStoppedAnimation(
+                                              Colors.white),
+                                        );
+                                      }
+                                      return LinearProgressIndicator(
+                                        backgroundColor: Colors.white,
+                                        valueColor: AlwaysStoppedAnimation(
+                                            Colors.white),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                ],
               );
             },
           ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        title: Text(
-          "Doa",
-          style: TextStyle(
-            fontFamily: "Poppins",
-            color: Colors.black,
-          ),
-        ),
-      ),
-      body: BlocBuilder<ColorBloc, Color>(
-        builder: (context, color) {
-          return Stack(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(
-                    top: (context.widthPct(.7) / 7), left: 40, right: 40),
-                width: context.widthPct(.8),
-                height: context.widthPct(.8),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        "Doa yang pas buat kamu yang lagi",
-                        style: Style(styleColor: Colors.grey.shade600).body,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        moodo,
-                        style: Style(styleColor: _themeActive(color)).title1,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              //heading
-              DraggableScrollableSheet(
-                  initialChildSize: 0.8,
-                  maxChildSize: 1,
-                  minChildSize: 0.8,
-                  builder: (BuildContext c, s) {
-                    return Container(
-                      padding: EdgeInsets.only(top: 0),
-                      margin: EdgeInsets.only(top: 0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(26),
-                          topRight: Radius.circular(26),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _themeActive(color).withAlpha(100),
-                            blurRadius: 6.0,
-                            offset: Offset(0, -7),
-                          )
-                        ],
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 32,
-                          ),
-                          //ANCHOR FutureBuilder
-                          Expanded(
-                            child: FutureBuilder(
-                                future: _isInit ? fetchDoa(context) : null,
-                                builder: (context, _) {
-                                  if (doaList != null) {
-                                    return ListView.builder(
-                                      controller: s,
-                                      itemCount: doaList!.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        Doa doa = doaList![index];
-
-                                        if (doa.mood.toString().toLowerCase() ==
-                                            moodo.toLowerCase())
-                                          return _itemList(index, color);
-                                        // if not return empty container
-                                        else
-                                          return Container();
-                                      },
-                                    );
-                                  } else {
-                                    LinearProgressIndicator(
-                                      backgroundColor: Colors.white,
-                                      valueColor:
-                                          AlwaysStoppedAnimation(Colors.white),
-                                    );
-                                  }
-                                  return LinearProgressIndicator(
-                                    backgroundColor: Colors.white,
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Colors.white),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-            ],
-          );
-        },
-      ),
+        );
+      },
     );
   }
 

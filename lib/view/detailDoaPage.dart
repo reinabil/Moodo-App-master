@@ -106,35 +106,45 @@ class DetailDoa extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 248, 248, 248),
       appBar: AppBar(
-        leading: InkWell(
-          child: Container(
-            margin: EdgeInsets.all(11),
-            decoration: BoxDecoration(
-              gradient: _theme(color),
-              boxShadow: [
-                BoxShadow(
-                    color: _themeActive(color).withAlpha(100),
-                    offset: Offset(1, 2),
-                    blurRadius: 3)
-              ],
-              borderRadius: BorderRadius.circular(100),
+        leading: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(1000),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(200),
+            splashColor: _themeActive(color).withAlpha(10),
+            highlightColor: _themeActive(color).withAlpha(10),
+            child: Container(
+              margin: EdgeInsets.all(11),
+              decoration: BoxDecoration(
+                gradient: _theme(color),
+                boxShadow: [
+                  BoxShadow(
+                      color: _themeActive(color).withAlpha(100),
+                      offset: Offset(1, 2),
+                      blurRadius: 3)
+                ],
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_rounded,
+                color: Colors.white,
+              ),
             ),
-            child: Icon(
-              Icons.arrow_back_ios_rounded,
-              color: Colors.white,
-            ),
+            onTap: () {
+              // ignore: unused_element
+              // setState() {
+              Navigator.pop(context);
+              //}
+            },
           ),
-          onTap: () {
-            // ignore: unused_element
-            // setState() {
-            Navigator.pop(context);
-            //}
-          },
         ),
         actions: <Widget>[
           Padding(
-              padding: EdgeInsets.only(right: 5.0),
-              child: GestureDetector(
+              padding: EdgeInsets.only(right: 0.0),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(2000),
+                splashColor: _themeActive(color).withAlpha(10),
+                highlightColor: _themeActive(color).withAlpha(10),
                 onTap: () {
                   // ignore: unused_element
                   // setState() {
@@ -143,25 +153,32 @@ class DetailDoa extends ConsumerWidget {
                 },
                 child: Icon(
                   Icons.mobile_screen_share_rounded,
-                  color: Colors.grey[400],
+                  color: _themeActive(color),
                   size: 26.0,
                 ),
               )),
           //ANCHOR Favorite icon
-          Padding(
-            padding: EdgeInsets.only(right: 10.0),
-            child: GestureDetector(
-              onTap: () {},
-              child: IconButton(
-                icon: favoriteIds.contains(doa.id.toString())
-                    ? Icon(Icons.favorite)
-                    : Icon(Icons.favorite_border),
-                color: favoriteIds.contains(doa.id.toString())
-                    ? Colors.red
-                    : Colors.grey,
-                onPressed: () => context
-                    .read(FavoriteIds.provider.notifier)
-                    .toggle(doa.id.toString()),
+          Material(
+            borderRadius: BorderRadius.circular(1000),
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context
+                  .read(FavoriteIds.provider.notifier)
+                  .toggle(doa.id.toString()),
+              borderRadius: BorderRadius.circular(2000),
+              splashColor: _themeActive(color).withAlpha(10),
+              highlightColor: _themeActive(color).withAlpha(10),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                child: Icon(
+                  (favoriteIds.contains(doa.id.toString()))
+                      ? (Icons.favorite)
+                      : (Icons.favorite_border),
+                  color: favoriteIds.contains(doa.id.toString())
+                      ? Colors.red
+                      : Colors.grey,
+                ),
               ),
             ),
           ),
@@ -238,11 +255,12 @@ class DetailDoa extends ConsumerWidget {
                           EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                       child: Column(
                         children: [
-                          Text(
-                            doa.lafaz!,
-                            style: TextStyle(fontSize: 32, fontFamily: "Sil"),
-                            textAlign: TextAlign.center,
-                          ),
+                          if (doa.lafaz != "")
+                            Text(
+                              doa.lafaz!,
+                              style: TextStyle(fontSize: 32, fontFamily: "Sil"),
+                              textAlign: TextAlign.center,
+                            ),
                           Container(
                             margin: EdgeInsets.only(top: 16),
                             alignment: Alignment.centerLeft,
@@ -262,58 +280,64 @@ class DetailDoa extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                          left: 24,
-                        ),
-                        child: Text(
-                          "Arti Doa",
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                            fontSize: 20,
+                if (doa.arti != "")
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 24,
                           ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(right: 24),
-                        child: IconButton(
-                            icon: Icon(
-                              Icons.share,
+                          child: Text(
+                            "Arti Doa",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
                               color: Colors.white,
+                              fontSize: 20,
                             ),
-                            onPressed: () {
-                              Share.share(
-                                  "${doa.judul}\n\n${doa.arti}\n\nShared with 💖 from Moodo App");
-                            }),
-                      )
-                    ],
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        if (doa.arti != "")
+                          Container(
+                            margin: EdgeInsets.only(right: 24),
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.share,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Share.share(
+                                      "${doa.judul}\n\n${doa.arti}\n\nShared with 💖 from Moodo App");
+                                }),
+                          )
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Card(
-                    elevation: 7,
-                    shadowColor: _themeActive(color).withAlpha(100),
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Container(
-                      padding: EdgeInsets.all(24),
-                      child: Text(
-                        doa.arti!,
-                        style: TextStyle(fontSize: 14, fontFamily: "Poppins"),
-                        textAlign: TextAlign.left,
+                if (doa.arti != "")
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: Card(
+                      elevation: 7,
+                      shadowColor: _themeActive(color).withAlpha(100),
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Container(
+                        padding: EdgeInsets.all(24),
+                        child: (doa.arti != "")
+                            ? Text(
+                                doa.arti!,
+                                style: TextStyle(
+                                    fontSize: 14, fontFamily: "Poppins"),
+                                textAlign: TextAlign.left,
+                              )
+                            : null,
                       ),
                     ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Row(
@@ -372,7 +396,7 @@ class DetailDoa extends ConsumerWidget {
                       Share.share(
                           "${doa.judul}\n\n${doa.lafaz}\n\nArtinya: ${doa.arti}\n\nTentang Doa: \n${doa.tentang}\n\nDisebarkan dengan sepenuh 💖 dari Moodo.\nInstall Moodo sekarang juga! https://ipb.link/get-moodo");
                     },
-                    style: TextButton.styleFrom(primary: Colors.tealAccent),
+                    style: TextButton.styleFrom(primary: _themeActive(color)),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text("Share lafaz, arti, dan riwayat ${doa.judul}",

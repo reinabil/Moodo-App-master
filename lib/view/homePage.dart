@@ -519,7 +519,11 @@ _sheet(ScrollController s, ColorBloc bloc) {
                   ),
                   Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: _wah(_theme(color))),
+                      child: Text(
+                        "Orang yang suka warna ${_warna(_theme(color))} itu",
+                        style: TextStyle(
+                            fontFamily: 'Poppins', color: Colors.grey),
+                      )),
                   // ! motivasi
                   AnimatedContainer(
                     width: context.widthPct(.7),
@@ -536,8 +540,8 @@ _sheet(ScrollController s, ColorBloc bloc) {
                       gradient: _theme(color),
                     ),
                     duration: Duration(milliseconds: 500),
-                    child: psikologiWarna(_theme(color)),
-                  )
+                    child: _psikologiWarna(_theme(color)),
+                  ),
                 ],
               )),
         ],
@@ -546,24 +550,7 @@ _sheet(ScrollController s, ColorBloc bloc) {
   );
 }
 
-_wah(LinearGradient theme) {
-  String warna = (theme == Style().gradasiPink)
-      ? "merah"
-      : (theme == Style().gradasiBiru)
-          ? "biru"
-          : (theme == Style().gradasiUngu)
-              ? "ungu"
-              : (theme == Style().gradasiOrange)
-                  ? "oren"
-                  : "hijau";
-
-  return Text(
-    "Orang yang suka warna $warna itu",
-    style: TextStyle(fontFamily: 'Poppins', color: Colors.grey),
-  );
-}
-
-psikologiWarna(LinearGradient theme) {
+_psikologiWarna(LinearGradient theme) {
   // ! ijo
   if (theme == gradasi) {
     return Center(
@@ -744,6 +731,19 @@ psikologiWarna(LinearGradient theme) {
       ],
     ));
   }
+}
+
+_warna(LinearGradient theme) {
+  String warna = (theme == Style().gradasiPink)
+      ? "merah"
+      : (theme == Style().gradasiBiru)
+          ? "biru"
+          : (theme == Style().gradasiUngu)
+              ? "ungu"
+              : (theme == Style().gradasiOrange)
+                  ? "oren"
+                  : "hijau";
+  return warna;
 }
 
 class Background extends StatelessWidget {

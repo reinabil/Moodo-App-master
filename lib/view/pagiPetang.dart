@@ -59,11 +59,6 @@ class PagiPetangPage extends StatefulWidget {
 }
 
 class _PagiPetangPageState extends State<PagiPetangPage> {
-  var now = new DateTime.now();
-  var waktu = Waktu();
-  var hijri = new HijriCalendar.now();
-  var doaRandom = new Random();
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ColorBloc, Color>(
@@ -158,8 +153,8 @@ class _PagiPetangPageState extends State<PagiPetangPage> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0)),
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0)),
                         boxShadow: [
                           BoxShadow(
                             color: _themeActive(color).withAlpha(100),

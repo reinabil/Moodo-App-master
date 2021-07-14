@@ -130,11 +130,11 @@ class FavPage extends ConsumerWidget {
                                       margin:
                                           EdgeInsets.symmetric(horizontal: 64),
                                       child: Text(
-                                        "Yah, doa favoritmu masih kosong.\nYuk baca doa dulu biar gak tersesat di dunia yang penuh tipu daya :)",
+                                        "Yah, doa favoritmu belom ada.\nYuk baca doa dulu biar gak tersesat di dunia yang penuh tipu daya :)",
                                         style: Style(
                                                 styleColor:
                                                     Colors.grey.shade600)
-                                            .body,
+                                            .caption,
                                         textAlign: TextAlign.center,
                                       )),
                                 ])),

@@ -79,6 +79,9 @@ class DetailDzikirPage extends StatelessWidget {
           backgroundColor: Color.fromARGB(255, 248, 248, 248),
           appBar: AppBar(
             leading: InkWell(
+              borderRadius: BorderRadius.circular(200),
+              splashColor: _themeActive(color).withAlpha(10),
+              highlightColor: _themeActive(color).withAlpha(10),
               child: Container(
                 margin: EdgeInsets.all(11),
                 decoration: BoxDecoration(
