@@ -296,7 +296,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                             countBloc.add(0);
                                           },
                                           child: Icon(
-                                            Icons.restart_alt_rounded,
+                                            Icons.settings_backup_restore,
                                             color: Colors.white,
                                           )),
                                     ),
