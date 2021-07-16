@@ -93,6 +93,17 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
     _isInit = false;
   }
 
+  PageController _pageController = PageController();
+  void nextPage() {
+    _pageController.animateToPage(_pageController.page!.toInt() + 1,
+        duration: Duration(milliseconds: 400), curve: Curves.easeIn);
+  }
+
+  void previousPage() {
+    _pageController.animateToPage(_pageController.page!.toInt() - 1,
+        duration: Duration(milliseconds: 400), curve: Curves.easeIn);
+  }
+
   // ANCHOR Tambah Waktu
   _tambahWaktu() {
     fetchDzikir(context);
@@ -177,10 +188,10 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                               splashColor: Colors.white,
                               highlightColor: _themeActive(color).withAlpha(10),
                               onTap: () {
-                                _moveDown();
+                                nextPage();
                               },
                               child: Icon(
-                                Icons.arrow_downward_rounded,
+                                Icons.east,
                                 color: _themeActive(color),
                               )),
                         ),
@@ -206,10 +217,10 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                               splashColor: Colors.white,
                               highlightColor: _themeActive(color).withAlpha(10),
                               onTap: () {
-                                _moveUp();
+                                previousPage();
                               },
                               child: Icon(
-                                Icons.arrow_upward_rounded,
+                                Icons.west,
                                 color: _themeActive(color),
                               )),
                         ),
@@ -296,7 +307,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                             countBloc.add(0);
                                           },
                                           child: Icon(
-                                            Icons.settings_backup_restore,
+                                            Icons.restart_alt_rounded,
                                             color: Colors.white,
                                           )),
                                     ),
@@ -419,11 +430,11 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                     // ANCHOR LIST VIEW
 
                                     child: Scrollbar(
-                                      isAlwaysShown: true,
+                                      isAlwaysShown: false,
+                                      radius: Radius.circular(20),
                                       controller: _controller,
-                                      child: ListView.builder(
-                                          padding: EdgeInsets.only(bottom: 80),
-                                          controller: _controller,
+                                      child: PageView.builder(
+                                          controller: _pageController,
                                           itemCount: _tambahWaktu().length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
@@ -465,12 +476,14 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: ListView(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(
+                  top: 16,
+                ),
                 child: Center(
                   child: SizedBox(
                     width: context.widthPct(.88),
@@ -513,7 +526,10 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 16.0, right: 16, top: 8),
+                                left: 16.0,
+                                right: 16,
+                                top: 8,
+                              ),
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
@@ -521,6 +537,31 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                   style: TextStyle(
                                       fontSize: 32, fontFamily: "Sil"),
                                   textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Container(
+                                width: 60,
+                                height: 2,
+                                decoration: BoxDecoration(
+                                    gradient: _theme(color),
+                                    borderRadius: BorderRadius.circular(20)),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16.0,
+                                right: 16,
+                                top: 8,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  dzikir.arti!,
+                                  style: Style().body,
+                                  textAlign: TextAlign.left,
                                 ),
                               ),
                             ),
@@ -535,7 +576,7 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                                 );
                               },
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(16),
                                 child: GradientText(
                                   "Baca selengkapnya",
                                   gradient: _theme(color),
@@ -553,6 +594,9 @@ class _ListDzikirPageState extends State<ListDzikirPage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 100,
+              )
             ],
           ),
         );

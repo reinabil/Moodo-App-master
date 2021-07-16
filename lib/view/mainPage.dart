@@ -124,89 +124,81 @@ class _MainPageState extends State<MainPage> {
                     }),
                 bottomNavigationBar: BlocBuilder<ColorBloc, Color>(
                   builder: (context, color) {
-                    return ConstrainedBox(
-                      constraints: new BoxConstraints(
-                        minHeight: context.heightPct(.11),
-                        minWidth: context.widthPct(.8),
-                        maxHeight: context.heightPct(.11),
-                        maxWidth: context.widthPct(.8),
-                      ),
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.ease,
-                        padding: EdgeInsets.all(8),
-                        margin: EdgeInsets.only(bottom: 24, right: 8, left: 8),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white),
-                            gradient: _theme(color),
-                            borderRadius: BorderRadius.circular(64),
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 10,
-                                  color: Colors.white,
-                                  offset: Offset(0, 0))
-                            ]),
-                        child: SafeArea(
-                            child: GNav(
-                                // curve: Curves.fastOutSlowIn,
-                                rippleColor: _themeActive(color),
-                                hoverColor: _themeActive(color),
-                                gap: 0,
-                                activeColor: _themeActive(color),
-                                iconSize: 24,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 12),
-                                duration: Duration(milliseconds: 800),
-                                tabBackgroundColor: Colors.white,
-                                tabs: [
-                                  GButton(
-                                      icon: Icons.home_rounded,
-                                      iconColor: Colors.white,
-                                      text: ' Home',
-                                      textStyle: TextStyle(
-                                        color: _themeActive(color),
-                                        fontFamily: "Poppins",
-                                        fontSize: 14,
-                                      )),
-                                  GButton(
-                                    icon: Icons.search,
+                    return AnimatedContainer(
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.ease,
+                      padding: EdgeInsets.all(8),
+                      margin: EdgeInsets.only(bottom: 24, right: 8, left: 8),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          gradient: _theme(color),
+                          borderRadius: BorderRadius.circular(64),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 10,
+                                color: Colors.white,
+                                offset: Offset(0, 0))
+                          ]),
+                      child: SafeArea(
+                          child: GNav(
+                              // curve: Curves.fastOutSlowIn,
+                              rippleColor: _themeActive(color),
+                              hoverColor: _themeActive(color),
+                              gap: 0,
+                              activeColor: _themeActive(color),
+                              iconSize: 24,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 12),
+                              duration: Duration(milliseconds: 800),
+                              tabBackgroundColor: Colors.white,
+                              tabs: [
+                                GButton(
+                                    icon: Icons.home_rounded,
                                     iconColor: Colors.white,
-                                    text: ' Cari doa',
+                                    text: ' Home',
                                     textStyle: TextStyle(
                                       color: _themeActive(color),
                                       fontFamily: "Poppins",
                                       fontSize: 14,
-                                    ),
+                                    )),
+                                GButton(
+                                  icon: Icons.search,
+                                  iconColor: Colors.white,
+                                  text: ' Cari doa',
+                                  textStyle: TextStyle(
+                                    color: _themeActive(color),
+                                    fontFamily: "Poppins",
+                                    fontSize: 14,
                                   ),
-                                  GButton(
-                                    icon: Icons.wb_sunny,
-                                    iconColor: Colors.white,
-                                    text: ' Pagi - Petang',
-                                    textStyle: TextStyle(
-                                      color: _themeActive(color),
-                                      fontFamily: "Poppins",
-                                      fontSize: 14,
-                                    ),
+                                ),
+                                GButton(
+                                  icon: Icons.wb_sunny,
+                                  iconColor: Colors.white,
+                                  text: ' Pagi - Petang',
+                                  textStyle: TextStyle(
+                                    color: _themeActive(color),
+                                    fontFamily: "Poppins",
+                                    fontSize: 14,
                                   ),
-                                  GButton(
-                                    icon: Icons.favorite_outlined,
-                                    iconColor: Colors.white,
-                                    text: ' Favorite',
-                                    textStyle: TextStyle(
-                                      color: _themeActive(color),
-                                      fontFamily: "Poppins",
-                                      fontSize: 14,
-                                    ),
+                                ),
+                                GButton(
+                                  icon: Icons.favorite_outlined,
+                                  iconColor: Colors.white,
+                                  text: ' Favorite',
+                                  textStyle: TextStyle(
+                                    color: _themeActive(color),
+                                    fontFamily: "Poppins",
+                                    fontSize: 14,
                                   ),
-                                ],
-                                selectedIndex: _selectedIndex,
-                                onTabChange: (index) {
-                                  setState(() {
-                                    _selectedIndex = index;
-                                  });
-                                  controller.jumpToPage(index);
-                                })),
-                      ),
+                                ),
+                              ],
+                              selectedIndex: _selectedIndex,
+                              onTabChange: (index) {
+                                setState(() {
+                                  _selectedIndex = index;
+                                });
+                                controller.jumpToPage(index);
+                              })),
                     );
                   },
                 ),
